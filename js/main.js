@@ -1,270 +1,172 @@
-/* ===== MOBILE MENU TOGGLE ===== */
+/* ===== MOBILE MENU ===== */
 const navMenu = document.getElementById('nav-menu');
 const navToggle = document.getElementById('nav-toggle');
 const navClose = document.getElementById('nav-close');
 
-// Show menu
-if (navToggle) {
-    navToggle.addEventListener('click', () => {
-        navMenu.classList.add('show-menu');
-    });
-}
+if (navToggle) navToggle.addEventListener('click', () => navMenu.classList.add('show-menu'));
+if (navClose) navClose.addEventListener('click', () => navMenu.classList.remove('show-menu'));
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => navMenu.classList.remove('show-menu'));
+});
 
-// Hide menu
-if (navClose) {
-    navClose.addEventListener('click', () => {
-        navMenu.classList.remove('show-menu');
-    });
-}
+/* ===== HEADROOM HEADER ===== */
+const header = document.getElementById('header');
+let lastScrollY = 0, ticking = false;
 
-// Close menu when clicking nav links
-const navLinks = document.querySelectorAll('.nav-link');
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('show-menu');
+function updateHeader() {
+    const y = window.scrollY;
+    header.classList.toggle('scroll-header', y > 50);
+    header.classList.toggle('header-hidden', y > lastScrollY && y > 200);
+    lastScrollY = y;
+    ticking = false;
+}
+window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(updateHeader); ticking = true; }
+});
+
+/* ===== INTERSECTION OBSERVER – REVEAL ===== */
+document.addEventListener('DOMContentLoaded', () => {
+    /* Auto-tag elements that should animate in */
+    const autoSelectors = [
+        '.service-card', '.feature-item', '.stat-item',
+        '.cta-card', '.value-card', '.requirement-card',
+        '.reason-item', '.gallery-item', '.contact-info-item',
+        '.service-detail', '.section-title', '.section-subtitle',
+        '.block-text-centered', '.recruitment-intro',
+        '.about-text', '.about-image',
+        '.section-tag', '.section-title-red'
+    ];
+    autoSelectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach((el, i) => {
+            if (!el.classList.contains('reveal')) {
+                el.classList.add('reveal');
+                el.classList.add('reveal-delay-' + Math.min(i + 1, 6));
+            }
+        });
+    });
+
+    /* Create observer */
+    if ('IntersectionObserver' in window) {
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('revealed');
+                    obs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal, .hr-reveal, .footer-hr').forEach(el => obs.observe(el));
+    } else {
+        document.querySelectorAll('.reveal, .hr-reveal, .footer-hr').forEach(el => el.classList.add('revealed'));
+    }
+});
+
+/* ===== MARQUEE DUPLICATION ===== */
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.marquee-track').forEach(track => {
+        /* Duplicate children so the loop is seamless */
+        const clone = track.innerHTML;
+        track.innerHTML += clone;
     });
 });
 
-/* ===== STICKY HEADER ON SCROLL ===== */
-const header = document.getElementById('header');
+/* ===== COUNTER ANIMATION ===== */
+document.addEventListener('DOMContentLoaded', () => {
+    if (!('IntersectionObserver' in window)) return;
+    const counters = document.querySelectorAll('.stat-number[data-count]');
+    const counterObs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (!e.isIntersecting) return;
+            const el = e.target;
+            const end = el.getAttribute('data-count');
+            const suffix = el.getAttribute('data-suffix') || '';
+            const prefix = el.getAttribute('data-prefix') || '';
+            const num = parseInt(end.replace(/\D/g, ''), 10);
+            if (isNaN(num)) { counterObs.unobserve(el); return; }
+            let start = 0;
+            const duration = 2000;
+            const step = ts => {
+                if (!start) start = ts;
+                const progress = Math.min((ts - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(eased * num);
+                el.textContent = prefix + current.toLocaleString() + suffix;
+                if (progress < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+            counterObs.unobserve(el);
+        });
+    }, { threshold: 0.3 });
+    counters.forEach(c => counterObs.observe(c));
+});
 
-function scrollHeader() {
-    if (window.scrollY >= 50) {
-        header.classList.add('scroll-header');
-    } else {
-        header.classList.remove('scroll-header');
-    }
-}
-
-window.addEventListener('scroll', scrollHeader);
-
-/* ===== ACTIVE SECTION HIGHLIGHTING ===== */
-const sections = document.querySelectorAll('section[id]');
-
-function scrollActive() {
-    const scrollY = window.pageYOffset;
-
-    sections.forEach(current => {
-        const sectionHeight = current.offsetHeight;
-        const sectionTop = current.offsetTop - 100;
-        const sectionId = current.getAttribute('id');
-        const navLink = document.querySelector('.nav-link[href*=' + sectionId + ']');
-
-        if (navLink) {
-            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-                navLink.classList.add('active');
-            } else {
-                navLink.classList.remove('active');
-            }
-        }
-    });
-}
-
-window.addEventListener('scroll', scrollActive);
-
-/* ===== SMOOTH SCROLL FOR ANCHOR LINKS ===== */
+/* ===== SMOOTH SCROLL ===== */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
+        const t = document.querySelector(this.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
 
-/* ===== FORM VALIDATION & SUBMISSION ===== */
+/* ===== FORM VALIDATION ===== */
 function validateForm(formId) {
     const form = document.getElementById(formId);
     if (!form) return;
-
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
-        
-        // Get form elements
         const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
-        let isValid = true;
-        
-        // Clear previous errors
-        form.querySelectorAll('.error-message').forEach(error => error.remove());
-        form.querySelectorAll('.input-error').forEach(input => input.classList.remove('input-error'));
-        
-        // Validate each required field
+        let valid = true;
+        form.querySelectorAll('.error-message').forEach(x => x.remove());
+        form.querySelectorAll('.input-error').forEach(x => x.classList.remove('input-error'));
+
         inputs.forEach(input => {
-            if (!input.value.trim()) {
-                isValid = false;
+            let msg = '';
+            if (!input.value.trim()) msg = 'This field is required';
+            else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) msg = 'Please enter a valid email';
+            else if (input.type === 'tel' && (!/^[\d\s\-\+\(\)]+$/.test(input.value) || input.value.length < 10)) msg = 'Please enter a valid phone number';
+            if (msg) {
+                valid = false;
                 input.classList.add('input-error');
-                
-                const errorMsg = document.createElement('span');
-                errorMsg.className = 'error-message';
-                errorMsg.textContent = 'This field is required';
-                errorMsg.style.color = '#FF6B35';
-                errorMsg.style.fontSize = '0.875rem';
-                errorMsg.style.display = 'block';
-                errorMsg.style.marginTop = '0.25rem';
-                
-                input.parentNode.appendChild(errorMsg);
-            }
-            
-            // Email validation
-            if (input.type === 'email' && input.value.trim()) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(input.value)) {
-                    isValid = false;
-                    input.classList.add('input-error');
-                    
-                    const errorMsg = document.createElement('span');
-                    errorMsg.className = 'error-message';
-                    errorMsg.textContent = 'Please enter a valid email address';
-                    errorMsg.style.color = '#FF6B35';
-                    errorMsg.style.fontSize = '0.875rem';
-                    errorMsg.style.display = 'block';
-                    errorMsg.style.marginTop = '0.25rem';
-                    
-                    input.parentNode.appendChild(errorMsg);
-                }
-            }
-            
-            // Phone validation
-            if (input.type === 'tel' && input.value.trim()) {
-                const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-                if (!phoneRegex.test(input.value) || input.value.length < 10) {
-                    isValid = false;
-                    input.classList.add('input-error');
-                    
-                    const errorMsg = document.createElement('span');
-                    errorMsg.className = 'error-message';
-                    errorMsg.textContent = 'Please enter a valid phone number';
-                    errorMsg.style.color = '#FF6B35';
-                    errorMsg.style.fontSize = '0.875rem';
-                    errorMsg.style.display = 'block';
-                    errorMsg.style.marginTop = '0.25rem';
-                    
-                    input.parentNode.appendChild(errorMsg);
-                }
+                const span = document.createElement('span');
+                span.className = 'error-message';
+                span.textContent = msg;
+                span.style.cssText = 'color:var(--error,#C30A0A);font-size:0.75rem;display:block;margin-top:0.25rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;';
+                input.parentNode.appendChild(span);
             }
         });
-        
-        if (isValid) {
-            // Show success message
-            const successMsg = document.createElement('div');
-            successMsg.className = 'success-message';
-            successMsg.innerHTML = `
-                <p style="color: #10b981; font-weight: 600; text-align: center; padding: 1rem; background-color: rgba(16, 185, 129, 0.1); border-radius: 4px; margin-top: 1rem;">
-                    ✓ Thank you! Your message has been sent successfully. We'll be in touch soon.
-                </p>
-            `;
-            
-            form.appendChild(successMsg);
+
+        if (valid) {
+            const s = document.createElement('div');
+            s.className = 'success-message';
+            s.innerHTML = '<p style="color:var(--success,#1D6F35);font-weight:700;text-align:center;padding:1rem;background:rgba(29,111,53,0.08);border-radius:8px;margin-top:1rem;text-transform:uppercase;font-size:0.875rem;letter-spacing:0.02em;">Thank you! Your message has been sent.</p>';
+            form.appendChild(s);
             form.reset();
-            
-            // Remove success message after 5 seconds
-            setTimeout(() => {
-                successMsg.remove();
-            }, 5000);
-            
-            // Here you would typically send the form data to your backend
-            // For now, we'll just log it
-            const formData = new FormData(form);
-            console.log('Form submitted:', Object.fromEntries(formData));
+            setTimeout(() => s.remove(), 5000);
         } else {
-            // Scroll to first error
-            const firstError = form.querySelector('.input-error');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            const first = form.querySelector('.input-error');
+            if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     });
 }
-
-// Initialize form validation when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     validateForm('contact-form');
     validateForm('recruitment-form');
 });
 
-/* ===== SCROLL REVEAL ANIMATION ===== */
-function revealOnScroll() {
-    const reveals = document.querySelectorAll('.service-card, .feature-item, .stat-item, .cta-card');
-    
-    reveals.forEach(element => {
-        const windowHeight = window.innerHeight;
-        const elementTop = element.getBoundingClientRect().top;
-        const elementVisible = 100;
-        
-        if (elementTop < windowHeight - elementVisible) {
-            element.style.opacity = '1';
-            element.style.transform = 'translateY(0)';
-        }
+/* ===== FILE UPLOAD ===== */
+document.addEventListener('DOMContentLoaded', () => {
+    const fi = document.getElementById('cv-upload');
+    if (!fi) return;
+    fi.addEventListener('change', e => {
+        const f = e.target.files[0];
+        const lbl = document.querySelector('.file-label');
+        if (!f) return;
+        const mb = (f.size / 1024 / 1024).toFixed(2);
+        const ok = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (!ok.includes(f.type)) { alert('Please upload a PDF or Word document'); fi.value=''; return; }
+        if (mb > 5) { alert('File must be under 5 MB'); fi.value=''; return; }
+        if (lbl) { lbl.textContent = f.name + ' (' + mb + ' MB)'; lbl.style.color='var(--success)'; lbl.style.borderColor='var(--success)'; }
     });
-}
-
-// Set initial state for reveal elements
-document.addEventListener('DOMContentLoaded', function() {
-    const reveals = document.querySelectorAll('.service-card, .feature-item, .stat-item, .cta-card');
-    reveals.forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(20px)';
-        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    });
-    
-    revealOnScroll();
 });
-
-window.addEventListener('scroll', revealOnScroll);
-
-/* ===== IMAGE LAZY LOADING ===== */
-document.addEventListener('DOMContentLoaded', function() {
-    const images = document.querySelectorAll('img[data-src]');
-    
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-                observer.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-});
-
-/* ===== FILE UPLOAD HANDLING (for recruitment form) ===== */
-function handleFileUpload() {
-    const fileInput = document.getElementById('cv-upload');
-    if (!fileInput) return;
-    
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const fileLabel = document.querySelector('.file-label');
-        
-        if (file) {
-            const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
-            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            
-            if (!allowedTypes.includes(file.type)) {
-                alert('Please upload a PDF or Word document');
-                fileInput.value = '';
-                return;
-            }
-            
-            if (fileSize > 5) {
-                alert('File size must be less than 5MB');
-                fileInput.value = '';
-                return;
-            }
-            
-            if (fileLabel) {
-                fileLabel.textContent = `✓ ${file.name} (${fileSize}MB)`;
-                fileLabel.style.color = '#10b981';
-            }
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', handleFileUpload);
