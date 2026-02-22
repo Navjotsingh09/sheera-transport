@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track your Seehra Transport delivery in real-time with our advanced tracking system.">
+    <title>Track Your Delivery | Seehra Transport</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-text">Seehra Transport</span>
+                <small>Multi-drop &amp; last-mile logistics</small>
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="services.html" class="nav-link">Services</a></li>
+                    <li class="nav-item"><a href="recruitment.html" class="nav-link">Recruitment</a></li>
+                    <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                    <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                    <li class="nav-item"><a href="portal.html" class="nav-link nav-link-portal">Portal</a></li>
+                </ul>
+                <div class="nav-close" id="nav-close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+            </div>
+            <button class="nav-search" id="nav-search" aria-label="Search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="nav-toggle" id="nav-toggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-hero-title">Track Your Delivery</h1>
+            <p class="page-hero-subtitle">Real-time tracking for complete peace of mind</p>
+        </div>
+    </section>
+
+    <!-- Tracking Section -->
+    <section class="tracking-section section">
+        <div class="container">
+            <div class="tracking-card">
+                <h2 class="tracking-card-title">Enter Your Tracking Number</h2>
+                <p class="tracking-card-subtitle">You can find your tracking number in your confirmation email or SMS</p>
+                <form class="tracking-form" id="tracking-form">
+                    <div class="tracking-input-group">
+                        <input type="text" class="form-input tracking-input" id="tracking-number" placeholder="e.g. ST123456789GB" required>
+                        <button type="submit" class="btn btn-primary btn-track">Track Parcel</button>
+                    </div>
+                    <p class="tracking-hint">Tracking numbers are typically 10-15 characters (letters and numbers)</p>
+                </form>
+            </div>
+
+            <!-- Tracking Result (Hidden by default) -->
+            <div class="tracking-result" id="tracking-result" style="display: none;">
+                <div class="tracking-result-header">
+                    <h3 class="tracking-result-title">Tracking: <span id="result-tracking-number"></span></h3>
+                    <button class="btn btn-outline btn-small" id="new-tracking">Track Another</button>
+                </div>
+
+                <!-- Delivery Status -->
+                <div class="delivery-status">
+                    <div class="delivery-status-badge" id="status-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span id="status-text">In Transit</span>
+                    </div>
+                    <div class="delivery-eta">
+                        <span class="eta-label">Estimated Delivery:</span>
+                        <span class="eta-time" id="eta-time">Today, 2:00 PM - 4:00 PM</span>
+                    </div>
+                </div>
+
+                <!-- Delivery Timeline -->
+                <div class="tracking-timeline">
+                    <div class="timeline-item timeline-item-completed">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h4 class="timeline-title">Order Received</h4>
+                            <p class="timeline-description">Your parcel has been collected from the sender</p>
+                            <time class="timeline-time">Today, 9:30 AM</time>
+                            <p class="timeline-location">London, United Kingdom</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item timeline-item-completed">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h4 class="timeline-title">Sorted at Depot</h4>
+                            <p class="timeline-description">Parcel processed at our distribution center</p>
+                            <time class="timeline-time">Today, 11:15 AM</time>
+                            <p class="timeline-location">Heathrow Hub, London</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item timeline-item-active">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h4 class="timeline-title">Out for Delivery</h4>
+                            <p class="timeline-description">Your parcel is on the delivery vehicle</p>
+                            <time class="timeline-time">Today, 1:45 PM</time>
+                            <p class="timeline-location">Manchester Area</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h4 class="timeline-title">Delivered</h4>
+                            <p class="timeline-description">Parcel will be delivered soon</p>
+                            <time class="timeline-time">Estimated: 2:00 PM - 4:00 PM</time>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Details -->
+                <div class="delivery-details-grid">
+                    <div class="delivery-detail-card">
+                        <h4 class="delivery-detail-title">Delivery Information</h4>
+                        <div class="delivery-detail-item">
+                            <span class="detail-label">Service Type:</span>
+                            <span class="detail-value">Next Day Delivery</span>
+                        </div>
+                        <div class="delivery-detail-item">
+                            <span class="detail-label">Package Weight:</span>
+                            <span class="detail-value">2.5 kg</span>
+                        </div>
+                        <div class="delivery-detail-item">
+                            <span class="detail-label">Reference:</span>
+                            <span class="detail-value">REF-2026-001234</span>
+                        </div>
+                    </div>
+                    <div class="delivery-detail-card">
+                        <h4 class="delivery-detail-title">Recipient Details</h4>
+                        <div class="delivery-detail-item">
+                            <span class="detail-label">Name:</span>
+                            <span class="detail-value">John Smith</span>
+                        </div>
+                        <div class="delivery-detail-item">
+                            <span class="detail-label">Address:</span>
+                            <span class="detail-value">Manchester, M1 ***</span>
+                        </div>
+                        <div class="delivery-detail-item">
+                            <span class="detail-label">Contact:</span>
+                            <span class="detail-value">****7890</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="tracking-actions">
+                    <a href="contact.html" class="btn btn-outline">Contact Support</a>
+                    <button class="btn btn-light" onclick="window.print()">Print Details</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tracking Help -->
+    <section class="tracking-help-section">
+        <div class="container">
+            <h2 class="section-title">Tracking Help</h2>
+            <div class="tracking-help-grid">
+                <div class="help-card">
+                    <div class="help-card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="help-card-title">Where is my tracking number?</h3>
+                    <p class="help-card-description">Your tracking number was sent to you via email and SMS when your parcel was collected. Check your confirmation messages.</p>
+                </div>
+                <div class="help-card">
+                    <div class="help-card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.86 19.86 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.86 19.86 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.13.81.36 1.6.68 2.34a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.74.32 1.53.55 2.34.68a2 2 0 011.72 2.03z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="help-card-title">No tracking updates?</h3>
+                    <p class="help-card-description">If you haven't seen updates for 24 hours, contact our support team on +44 (0) 1234 567890 for assistance.</p>
+                </div>
+                <div class="help-card">
+                    <div class="help-card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="help-card-title">Missed delivery?</h3>
+                    <p class="help-card-description">Sign in to your portal to reschedule delivery, redirect to a neighbor, or arrange collection from our depot.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section--centered">
+        <div class="container">
+            <div class="cta-content-centered">
+                <h2 class="cta-title-centered">Need More Help?</h2>
+                <p class="cta-description-centered">Our customer support team is here to assist you with any delivery questions or concerns.</p>
+                <div class="cta-buttons-centered">
+                    <a href="contact.html" class="btn btn-secondary">Contact Support</a>
+                    <a href="portal.html" class="btn btn-outline">Sign In to Portal</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <hr class="footer-hr">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4 class="footer-title">About</h4>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Our Story</a></li>
+                        <li><a href="about.html">Our Values</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="services.html#multi-drop">Multi-Drop Delivery</a></li>
+                        <li><a href="services.html#last-mile">Last-Mile Logistics</a></li>
+                        <li><a href="services.html#flexible">Flexible Solutions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Careers</h4>
+                    <ul class="footer-links">
+                        <li><a href="recruitment.html">Driver Recruitment</a></li>
+                        <li><a href="recruitment.html">Requirements</a></li>
+                        <li><a href="recruitment.html">Apply Now</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Follow Us</h4>
+                    <ul class="footer-links footer-social-links">
+                        <li><a href="#">LinkedIn</a></li>
+                        <li><a href="#">Twitter / X</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Facebook</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-contact-block">
+                <h4 class="footer-title">Contact</h4>
+                <div class="footer-contact-grid">
+                    <a href="tel:+441234567890" class="footer-contact-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.86 19.86 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.86 19.86 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.13.81.36 1.6.68 2.34a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.74.32 1.53.55 2.34.68a2 2 0 011.72 2.03z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>+44 (0) 1234 567890</span>
+                    </a>
+                    <a href="mailto:info@seehratransport.co.uk" class="footer-contact-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>info@seehratransport.co.uk</span>
+                    </a>
+                    <span class="footer-contact-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>
+                        <span>United Kingdom</span>
+                    </span>
+                </div>
+            </div>
+            <div class="footer-watermark">Seehra Transport</div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Seehra Transport. All rights reserved.</p>
+                <p><a href="#">Privacy Policy</a> &middot; <a href="#">Terms</a> &middot; <a href="sitemap.xml">Sitemap</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Tracking form submission
+        document.getElementById('tracking-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const trackingNumber = document.getElementById('tracking-number').value.trim();
+            
+            if (!trackingNumber) {
+                alert('Please enter a tracking number');
+                return;
+            }
+
+            // Simulate tracking lookup (in production, this would call your backend API)
+            document.getElementById('result-tracking-number').textContent = trackingNumber;
+            document.querySelector('.tracking-card').style.display = 'none';
+            document.getElementById('tracking-result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('tracking-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        // New tracking button
+        document.getElementById('new-tracking')?.addEventListener('click', () => {
+            document.getElementById('tracking-form').reset();
+            document.querySelector('.tracking-card').style.display = 'block';
+            document.getElementById('tracking-result').style.display = 'none';
+            document.querySelector('.tracking-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    </script>
+</body>
+</html>

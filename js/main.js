@@ -24,6 +24,24 @@ window.addEventListener('scroll', () => {
     if (!ticking) { requestAnimationFrame(updateHeader); ticking = true; }
 });
 
+/* ===== HERO PARALLAX ===== */
+(function heroParallax() {
+    const heroBg = document.querySelector('.hero-bg img, .hero-bg video');
+    if (!heroBg) return;
+    let rafId;
+    function onScroll() {
+        const y = window.scrollY;
+        const heroH = document.querySelector('.hero')?.offsetHeight || window.innerHeight;
+        if (y < heroH) {
+            heroBg.style.transform = 'translateY(' + (y * 0.15) + 'px) scale(1.05)';
+        }
+    }
+    window.addEventListener('scroll', () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(onScroll);
+    }, { passive: true });
+})();
+
 /* ===== INTERSECTION OBSERVER – REVEAL ===== */
 document.addEventListener('DOMContentLoaded', () => {
     /* Auto-tag elements that should animate in */
@@ -34,7 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
         '.service-detail', '.section-title', '.section-subtitle',
         '.block-text-centered', '.recruitment-intro',
         '.about-text', '.about-image',
-        '.section-tag', '.section-title-red'
+        '.section-tag', '.section-title-red',
+        '.news-card', '.directory-card', '.industry-stat',
+        '.community-cta', '.video-cta-content',
+        '.stay-connected-inner', '.footer-contact-block',
+        '.footer-watermark'
     ];
     autoSelectors.forEach(sel => {
         document.querySelectorAll(sel).forEach((el, i) => {
@@ -65,21 +87,20 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ===== MARQUEE DUPLICATION ===== */
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.marquee-track').forEach(track => {
-        /* Duplicate children so the loop is seamless */
         const clone = track.innerHTML;
         track.innerHTML += clone;
     });
 });
 
-/* ===== COUNTER ANIMATION ===== */
+/* ===== COUNTER ANIMATION (used by both .stat-number and .stat-counter) ===== */
 document.addEventListener('DOMContentLoaded', () => {
     if (!('IntersectionObserver' in window)) return;
-    const counters = document.querySelectorAll('.stat-number[data-count]');
+    const counters = document.querySelectorAll('[data-count], .stat-counter');
     const counterObs = new IntersectionObserver(entries => {
         entries.forEach(e => {
             if (!e.isIntersecting) return;
             const el = e.target;
-            const end = el.getAttribute('data-count');
+            const end = el.getAttribute('data-count') || el.textContent;
             const suffix = el.getAttribute('data-suffix') || '';
             const prefix = el.getAttribute('data-prefix') || '';
             const num = parseInt(end.replace(/\D/g, ''), 10);
@@ -169,4 +190,58 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mb > 5) { alert('File must be under 5 MB'); fi.value=''; return; }
         if (lbl) { lbl.textContent = f.name + ' (' + mb + ' MB)'; lbl.style.color='var(--success)'; lbl.style.borderColor='var(--success)'; }
     });
+});
+
+/* ===== QUOTE CALCULATOR ===== */
+document.addEventListener('DOMContentLoaded', () => {
+    const quoteForm = document.getElementById('quote-form');
+    const quoteResult = document.getElementById('quote-result');
+    const quotePriceEl = document.getElementById('quote-price');
+    const resetBtn = document.getElementById('reset-quote');
+
+    if (!quoteForm) return;
+
+    // Pricing matrix (base prices in GBP)
+    const pricing = {
+        'standard': { '0-5': 6.99, '5-10': 8.99, '10-25': 12.99, '25+': 18.99 },
+        'next-day': { '0-5': 12.99, '5-10': 15.99, '10-25': 19.99, '25+': 26.99 },
+        'same-day': { '0-5': 24.99, '5-10': 29.99, '10-25': 34.99, '25+': 44.99 }
+    };
+
+    quoteForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const fromPostcode = document.getElementById('from-postcode').value.trim();
+        const toPostcode = document.getElementById('to-postcode').value.trim();
+        const serviceType = document.getElementById('service-type').value;
+        const packageWeight = document.getElementById('package-weight').value;
+
+        if (!fromPostcode || !toPostcode) {
+            alert('Please enter both postcodes');
+            return;
+        }
+
+        // Calculate price
+        const basePrice = pricing[serviceType][packageWeight];
+        const distance = Math.random() * 50 + 10; // Simulate distance calculation
+        const distanceMultiplier = 1 + (distance / 200);
+        const finalPrice = (basePrice * distanceMultiplier).toFixed(2);
+
+        // Display result
+        quotePriceEl.textContent = '£' + finalPrice;
+        quoteForm.style.display = 'none';
+        quoteResult.style.display = 'block';
+
+        // Scroll to result
+        quoteResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            quoteForm.reset();
+            quoteForm.style.display = 'block';
+            quoteResult.style.display = 'none';
+            quoteForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
 });

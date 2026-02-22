@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Seehra Transport Customer Portal - Track orders, manage bookings, and view invoices online.">
+    <title>Customer Portal | Seehra Transport</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-text">Seehra Transport</span>
+                <small>Multi-drop &amp; last-mile logistics</small>
+            </a>
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="services.html" class="nav-link">Services</a></li>
+                    <li class="nav-item"><a href="recruitment.html" class="nav-link">Recruitment</a></li>
+                    <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                    <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                    <li class="nav-item"><a href="portal.html" class="nav-link nav-link-portal active">Portal</a></li>
+                </ul>
+                <div class="nav-close" id="nav-close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+            </div>
+            <button class="nav-search" id="nav-search" aria-label="Search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="nav-toggle" id="nav-toggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-hero-title">Customer Portal</h1>
+            <p class="page-hero-subtitle">Access your account, track deliveries, and manage bookings</p>
+        </div>
+    </section>
+
+    <!-- Portal Content -->
+    <section class="portal-section section">
+        <div class="container">
+            <div class="portal-grid">
+                <!-- Login Form -->
+                <div class="portal-card" id="login-card">
+                    <div class="portal-card-header">
+                        <h2 class="portal-card-title">Sign In</h2>
+                        <p class="portal-card-subtitle">Access your Seehra Transport account</p>
+                    </div>
+                    <form class="portal-form" id="portal-login-form">
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" id="login-email" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" id="login-password" placeholder="Enter your password" required>
+                        </div>
+                        <div class="form-group form-group-checkbox">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="remember-me">
+                                <span>Remember me</span>
+                            </label>
+                            <a href="#" class="portal-link">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+                        <p class="portal-divider">Don't have an account? <a href="#" class="portal-link" id="show-register">Register here</a></p>
+                    </form>
+                </div>
+
+                <!-- Registration Form (Hidden by default) -->
+                <div class="portal-card" id="register-card" style="display: none;">
+                    <div class="portal-card-header">
+                        <h2 class="portal-card-title">Create Account</h2>
+                        <p class="portal-card-subtitle">Join Seehra Transport for streamlined deliveries</p>
+                    </div>
+                    <form class="portal-form" id="portal-register-form">
+                        <div class="form-group">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" class="form-input" id="register-company" placeholder="Your company name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" id="register-email" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-input" id="register-phone" placeholder="+44 1234 567890" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" id="register-password" placeholder="Create a password" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-input" id="register-password-confirm" placeholder="Confirm your password" required>
+                        </div>
+                        <div class="form-group form-group-checkbox">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="accept-terms" required>
+                                <span>I agree to the <a href="#" class="portal-link">Terms & Conditions</a></span>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+                        <p class="portal-divider">Already have an account? <a href="#" class="portal-link" id="show-login">Sign in here</a></p>
+                    </form>
+                </div>
+
+                <!-- Portal Features -->
+                <div class="portal-features">
+                    <h3 class="portal-features-title">Portal Benefits</h3>
+                    <div class="portal-features-list">
+                        <div class="portal-feature-item">
+                            <div class="portal-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            </div>
+                            <div class="portal-feature-content">
+                                <h4 class="portal-feature-title">Real-Time Tracking</h4>
+                                <p class="portal-feature-description">Monitor all your deliveries in real-time with live updates</p>
+                            </div>
+                        </div>
+                        <div class="portal-feature-item">
+                            <div class="portal-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 2v4M15 2v4M3 10h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            </div>
+                            <div class="portal-feature-content">
+                                <h4 class="portal-feature-title">Easy Booking</h4>
+                                <p class="portal-feature-description">Schedule collections and deliveries with just a few clicks</p>
+                            </div>
+                        </div>
+                        <div class="portal-feature-item">
+                            <div class="portal-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            </div>
+                            <div class="portal-feature-content">
+                                <h4 class="portal-feature-title">Invoice Management</h4>
+                                <p class="portal-feature-description">View and download all your invoices in one place</p>
+                            </div>
+                        </div>
+                        <div class="portal-feature-item">
+                            <div class="portal-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            </div>
+                            <div class="portal-feature-content">
+                                <h4 class="portal-feature-title">Delivery History</h4>
+                                <p class="portal-feature-description">Access complete history of all your past deliveries</p>
+                            </div>
+                        </div>
+                        <div class="portal-feature-item">
+                            <div class="portal-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                            <div class="portal-feature-content">
+                                <h4 class="portal-feature-title">Secure Platform</h4>
+                                <p class="portal-feature-description">Your data is protected with enterprise-grade security</p>
+                            </div>
+                        </div>
+                        <div class="portal-feature-item">
+                            <div class="portal-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                            </div>
+                            <div class="portal-feature-content">
+                                <h4 class="portal-feature-title">Dedicated Support</h4>
+                                <p class="portal-feature-description">Get priority support from our expert team</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Track -->
+    <section class="quick-track-section">
+        <div class="container">
+            <div class="quick-track-inner">
+                <h2 class="quick-track-title">Track a Delivery Without Login</h2>
+                <form class="quick-track-form" id="quick-track-form">
+                    <input type="text" class="form-input quick-track-input" placeholder="Enter your tracking number" required>
+                    <button type="submit" class="btn btn-primary">Track</button>
+                </form>
+                <p class="quick-track-note">No account needed for basic tracking</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section--centered">
+        <div class="container">
+            <div class="cta-content-centered">
+                <h2 class="cta-title-centered">Need Help Getting Started?</h2>
+                <p class="cta-description-centered">Our team is here to help you set up your account and get the most out of our portal.</p>
+                <div class="cta-buttons-centered">
+                    <a href="contact.html" class="btn btn-secondary">Contact Support</a>
+                    <a href="tel:+441234567890" class="btn btn-outline">Call Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <hr class="footer-hr">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4 class="footer-title">About</h4>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Our Story</a></li>
+                        <li><a href="about.html">Our Values</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="services.html#multi-drop">Multi-Drop Delivery</a></li>
+                        <li><a href="services.html#last-mile">Last-Mile Logistics</a></li>
+                        <li><a href="services.html#flexible">Flexible Solutions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Careers</h4>
+                    <ul class="footer-links">
+                        <li><a href="recruitment.html">Driver Recruitment</a></li>
+                        <li><a href="recruitment.html">Requirements</a></li>
+                        <li><a href="recruitment.html">Apply Now</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Follow Us</h4>
+                    <ul class="footer-links footer-social-links">
+                        <li><a href="#">LinkedIn</a></li>
+                        <li><a href="#">Twitter / X</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Facebook</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-contact-block">
+                <h4 class="footer-title">Contact</h4>
+                <div class="footer-contact-grid">
+                    <a href="tel:+441234567890" class="footer-contact-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.86 19.86 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.86 19.86 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.13.81.36 1.6.68 2.34a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.74.32 1.53.55 2.34.68a2 2 0 011.72 2.03z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>+44 (0) 1234 567890</span>
+                    </a>
+                    <a href="mailto:info@seehratransport.co.uk" class="footer-contact-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>info@seehratransport.co.uk</span>
+                    </a>
+                    <span class="footer-contact-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>
+                        <span>United Kingdom</span>
+                    </span>
+                </div>
+            </div>
+            <div class="footer-watermark">Seehra Transport</div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Seehra Transport. All rights reserved.</p>
+                <p><a href="#">Privacy Policy</a> &middot; <a href="#">Terms</a> &middot; <a href="sitemap.xml">Sitemap</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Portal form switching
+        document.getElementById('show-register')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('login-card').style.display = 'none';
+            document.getElementById('register-card').style.display = 'block';
+        });
+
+        document.getElementById('show-login')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('register-card').style.display = 'none';
+            document.getElementById('login-card').style.display = 'block';
+        });
+
+        // Portal login form submission
+        document.getElementById('portal-login-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Login functionality would connect to your backend authentication system.');
+        });
+
+        // Portal registration form submission
+        document.getElementById('portal-register-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-password-confirm').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            alert('Registration functionality would connect to your backend system.');
+        });
+
+        // Quick track form
+        document.getElementById('quick-track-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Tracking functionality would connect to your delivery tracking system.');
+        });
+    </script>
+</body>
+</html>
