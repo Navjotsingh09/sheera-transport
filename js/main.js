@@ -131,11 +131,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-/* ===== FORM VALIDATION ===== */
+/* ===== FORM VALIDATION WITH FIREBASE ===== */
 function validateForm(formId) {
     const form = document.getElementById(formId);
     if (!form) return;
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
         const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
         let valid = true;
@@ -159,12 +159,40 @@ function validateForm(formId) {
         });
 
         if (valid) {
-            const s = document.createElement('div');
-            s.className = 'success-message';
-            s.innerHTML = '<p style="color:var(--success,#1D6F35);font-weight:700;text-align:center;padding:1rem;background:rgba(29,111,53,0.08);border-radius:8px;margin-top:1rem;text-transform:uppercase;font-size:0.875rem;letter-spacing:0.02em;">Thank you! Your message has been sent.</p>';
-            form.appendChild(s);
-            form.reset();
-            setTimeout(() => s.remove(), 5000);
+            try {
+                // Collect form data
+                let formData = {};
+                inputs.forEach(input => {
+                    formData[input.name] = input.value;
+                });
+
+                // Submit to Firebase
+                let result;
+                if (formId === 'contact-form') {
+                    const { submitContactForm } = await import('./firebase-forms.js');
+                    result = await submitContactForm(formData);
+                } else if (formId === 'recruitment-form') {
+                    const { submitRecruitmentForm } = await import('./firebase-forms.js');
+                    result = await submitRecruitmentForm(formData);
+                }
+
+                if (result && result.success) {
+                    const s = document.createElement('div');
+                    s.className = 'success-message';
+                    s.innerHTML = '<p style="color:var(--success,#1D6F35);font-weight:700;text-align:center;padding:1rem;background:rgba(29,111,53,0.08);border-radius:8px;margin-top:1rem;text-transform:uppercase;font-size:0.875rem;letter-spacing:0.02em;">✅ Thank you! Your submission (ID: ' + result.id.substring(0, 8) + '...) has been saved.</p>';
+                    form.appendChild(s);
+                    form.reset();
+                    setTimeout(() => s.remove(), 10000);
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (error) {
+                console.error('Form submission error:', error);
+                const s = document.createElement('div');
+                s.className = 'error-message';
+                s.innerHTML = '<p style="color:var(--error,#C30A0A);font-weight:700;text-align:center;padding:1rem;background:rgba(195,10,10,0.08);border-radius:8px;margin-top:1rem;text-transform:uppercase;font-size:0.875rem;letter-spacing:0.02em;">⚠️ Error submitting form. Please try again.</p>';
+                form.appendChild(s);
+            }
         } else {
             const first = form.querySelector('.input-error');
             if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });

@@ -215,22 +215,36 @@ document.getElementById('booking-form')?.addEventListener('submit', async (e) =>
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span>Processing...</span>';
 
-    // Simulate API call (replace with actual backend call)
-    setTimeout(() => {
-        // Generate tracking number
-        const trackingNumber = 'ST' + Date.now().toString().slice(-9) + 'GB';
-        const bookingId = 'BK-' + new Date().toISOString().split('T')[0].replace(/-/g, '') + '-' + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    try {
+        // Submit to Firebase
+        const { submitBookingForm } = await import('./firebase-forms.js');
+        const result = await submitBookingForm(bookingData);
 
-        // Store booking data in localStorage (temporary - replace with backend)
-        localStorage.setItem('lastBooking', JSON.stringify({
-            ...bookingData,
-            bookingId,
-            trackingNumber,
-            bookingDate: new Date().toISOString(),
-            status: 'confirmed'
-        }));
+        if (result && result.success) {
+            // Generate tracking number
+            const trackingNumber = 'ST' + Date.now().toString().slice(-9) + 'GB';
+            const bookingId = result.id;
 
-        // Redirect to confirmation page
-        window.location.href = `confirmation.html?booking=${bookingId}&tracking=${trackingNumber}`;
-    }, 2000);
+            // Store booking data in localStorage
+            localStorage.setItem('lastBooking', JSON.stringify({
+                ...bookingData,
+                bookingId,
+                trackingNumber,
+                bookingDate: new Date().toISOString(),
+                status: 'confirmed'
+            }));
+
+            // Redirect to confirmation page
+            setTimeout(() => {
+                window.location.href = `confirmation.html?booking=${bookingId}&tracking=${trackingNumber}`;
+            }, 1500);
+        } else {
+            throw new Error('Booking submission failed');
+        }
+    } catch (error) {
+        console.error('Booking error:', error);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        alert('❌ Error submitting booking. Please try again.\n\n' + error.message);
+    }
 });

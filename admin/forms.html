@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seehra Transport - Form Submissions</title>
+    <style>
+        :root {
+            --dark-blue: #001060;
+            --red: #FF1500;
+            --white: #ffffff;
+            --gray-bg: #f5f5f5;
+            --gray-mid: #999999;
+            --gray-dark: #666666;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-bg);
+            color: var(--dark-blue);
+        }
+
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--dark-blue) 0%, rgba(0, 16, 96, 0.8) 100%);
+        }
+
+        .login-box {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: var(--gray-mid);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid rgba(0, 16, 96, 0.15);
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--dark-blue);
+            box-shadow: 0 0 0 3px rgba(0, 16, 96, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--dark-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover { background: var(--red); }
+
+        .error { 
+            background: rgba(195, 10, 10, 0.1);
+            color: #C30A0A;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error.show { display: block; }
+
+        .dashboard { display: none; }
+
+        .header {
+            background: var(--white);
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 16, 96, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            text-transform: uppercase;
+        }
+
+        .logout-btn {
+            background: var(--red);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(0, 16, 96, 0.1);
+        }
+
+        .tab-btn {
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--gray-mid);
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--dark-blue);
+            border-bottom-color: var(--red);
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        th {
+            background: rgba(0, 16, 96, 0.05);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 1rem;
+            border-top: 1px solid rgba(0, 16, 96, 0.08);
+        }
+
+        tr:hover { background: rgba(0, 16, 96, 0.02); }
+
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-new { background: rgba(255, 21, 0, 0.1); color: var(--red); }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-mid);
+        }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 1rem; }
+            table { font-size: 0.9rem; }
+            td { padding: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login" class="login-screen">
+        <div class="login-box">
+            <h1 class="login-title">Admin</h1>
+            <p class="login-subtitle">Form Submissions</p>
+            
+            <div id="error" class="error"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="email" placeholder="admin@seehratransport.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--gray-mid);">
+                📝 After Firebase setup:<br>
+                admin@seehratransport.com<br>
+                Admin@12345
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <div class="header">
+            <h1>Form Submissions</h1>
+            <div style="text-align: right;">
+                <p style="margin-bottom: 0.5rem;"><strong id="userEmail"></strong></p>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="0">📧 Contact</button>
+                <button class="tab-btn" data-tab="1">👤 Recruitment</button>
+                <button class="tab-btn" data-tab="2">🚗 Bookings</button>
+            </div>
+
+            <div id="tab0" class="tab-panel active">
+                <table id="contactTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Service</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contactData"></tbody>
+                </table>
+                <div id="contactEmpty" class="no-data">No contact submissions yet</div>
+            </div>
+
+            <div id="tab1" class="tab-panel">
+                <table id="recruitmentTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>License Type</th>
+                            <th>Experience</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recruitmentData"></tbody>
+                </table>
+                <div id="recruitmentEmpty" class="no-data">No applications yet</div>
+            </div>
+
+            <div id="tab2" class="tab-panel">
+                <table id="bookingTable">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Service</th>
+                            <th>Price</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingData"></tbody>
+                </table>
+                <div id="bookingEmpty" class="no-data">No bookings yet</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+        // Firebase Config - UPDATE WITH YOUR CREDENTIALS
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmL8K9pQrL2xZ9mN0oA1bC2dE3fG4hI5j",
+            authDomain: "seehra-transport-demo.firebaseapp.com",
+            projectId: "seehra-transport-demo",
+            storageBucket: "seehra-transport-demo.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef1234567890"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const loginScreen = document.getElementById('login');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('loginForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const errorDiv = document.getElementById('error');
+        const userEmail = document.getElementById('userEmail');
+        const tabs = document.querySelectorAll('.tab-btn');
+
+        // Tab switching
+        tabs.forEach((btn, idx) => {
+            btn.addEventListener('click', () => {
+                tabs.forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab' + btn.dataset.tab).classList.add('active');
+                loadData(idx);
+            });
+        });
+
+        // Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                errorDiv.textContent = '❌ ' + error.message;
+                errorDiv.classList.add('show');
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => signOut(auth));
+
+        // Auth state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loginScreen.style.display = 'none';
+                dashboard.style.display = 'block';
+                userEmail.textContent = user.email;
+                loadData(0);
+            } else {
+                loginScreen.style.display = 'flex';
+                dashboard.style.display = 'none';
+            }
+        });
+
+        // Load data
+        async function loadData(tabIndex) {
+            if (tabIndex === 0) loadContact();
+            else if (tabIndex === 1) loadRecruitment();
+            else if (tabIndex === 2) loadBooking();
+        }
+
+        async function loadContact() {
+            try {
+                const data = await getDocs(collection(db, 'contact_submissions'));
+                const tbody = document.getElementById('contactData');
+                const empty = document.getElementById('contactEmpty');
+                
+                tbody.innerHTML = '';
+                if (data.empty) {
+                    empty.style.display = 'block';
+                    return;
+                }
+                empty.style.display = 'none';
+
+                data.forEach(doc => {
+                    const d = doc.data();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${d.name}</td>
+                            <td>${d.email}</td>
+                            <td>${d.phone}</td>
+                            <td>${d.service}</td>
+                            <td>${d.submittedAt ? new Date(d.submittedAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+                            <td><span class="status status-new">${d.status}</span></td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading contact:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function loadRecruitment() {
+            try {
+                const data = await getDocs(collection(db, 'recruitment_submissions'));
+                const tbody = document.getElementById('recruitmentData');
+                const empty = document.getElementById('recruitmentEmpty');
+                
+                tbody.innerHTML = '';
+                if (data.empty) {
+                    empty.style.display = 'block';
+                    return;
+                }
+                empty.style.display = 'none';
+
+                data.forEach(doc => {
+                    const d = doc.data();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${d.fullName}</td>
+                            <td>${d.email}</td>
+                            <td>${d.licenseType}</td>
+                            <td>${d.experience}</td>
+                            <td>${d.submittedAt ? new Date(d.submittedAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+                            <td><span class="status status-new">${d.status}</span></td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading recruitment:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function loadBooking() {
+            try {
+                const data = await getDocs(collection(db, 'booking_submissions'));
+                const tbody = document.getElementById('bookingData');
+                const empty = document.getElementById('bookingEmpty');
+                
+                tbody.innerHTML = '';
+                if (data.empty) {
+                    empty.style.display = 'block';
+                    return;
+                }
+                empty.style.display = 'none';
+
+                data.forEach(doc => {
+                    const d = doc.data();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${d.collection?.city || 'N/A'}</td>
+                            <td>${d.delivery?.city || 'N/A'}</td>
+                            <td>${d.service}</td>
+                            <td>£${d.price}</td>
+                            <td>${d.submittedAt ? new Date(d.submittedAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+                            <td><span class="status status-new">${d.status}</span></td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
