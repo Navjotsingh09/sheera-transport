@@ -222,6 +222,7 @@ class WhatsAppChatWidget {
         
         if (this.isOpen) {
             badge.style.display = 'none';
+            badge.classList.remove('show');
             document.getElementById('whatsapp-input').focus();
         }
     }
@@ -335,6 +336,6 @@ setTimeout(() => {
     const badge = document.getElementById('whatsapp-badge');
     if (badge && !document.getElementById('whatsapp-widget').classList.contains('active')) {
         badge.style.display = 'flex';
-        badge.classList.add('pulse');
+        badge.classList.add('show');
     }
 }, 5000);
