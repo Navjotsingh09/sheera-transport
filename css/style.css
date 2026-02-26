@@ -1730,6 +1730,30 @@ a.footer-contact-item:hover svg { opacity: 1; }
     min-width: 0;
 }
 
+/* ── Enterprise header (services page) ── */
+.enterprise-header {
+    text-align: center; max-width: 800px; margin: 0 auto 4rem;
+}
+.enterprise-subtitle {
+    font-size: 1.125rem; color: var(--gray-mid); margin: 0;
+}
+.business-cta-note {
+    font-size: 0.875rem; color: rgba(255,255,255,0.6); margin-top: 1rem; margin-bottom: 0;
+}
+
+/* ── Service detail subtitle ── */
+.service-detail-subtitle {
+    color: var(--gray-mid); margin: 0; font-weight: 300;
+}
+.service-detail-content h3 {
+    margin-top: 1.5rem; margin-bottom: 1rem;
+}
+
+/* ── Apply form wrapper (recruitment page) ── */
+.apply-form-wrapper {
+    max-width: 700px; margin: 0 auto;
+}
+
 /* ── Large Desktops → Tablets (1280px) ── */
 @media screen and (max-width: 1280px) {
     :root { --gutter: 24px; }
@@ -1748,6 +1772,27 @@ a.footer-contact-item:hover svg { opacity: 1; }
     /* Typography scaling */
     h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
     h2 { font-size: clamp(1.75rem, 3.5vw, 3rem); }
+
+    /* ── Navigation — switch to hamburger at tablet ── */
+    .nav-menu {
+        position: fixed; inset: 0; background: var(--dark-blue);
+        display: flex; align-items: center; justify-content: center;
+        transform: translateX(100%); transition: transform 0.4s var(--ease-out); z-index: 5;
+    }
+    .nav-menu.show-menu { transform: translateX(0); }
+    .nav-list {
+        flex-direction: column; background: none;
+        -webkit-backdrop-filter: none; backdrop-filter: none; padding: 0; gap: 0.25rem;
+    }
+    .nav-link { font-size: 1.5rem; padding: 0.875rem 1.5rem; text-align: center; }
+    .nav-toggle { display: flex; align-items: center; justify-content: center; }
+    .nav-close {
+        display: flex; align-items: center; justify-content: center;
+        position: absolute; top: 1.25rem; right: 1.25rem;
+    }
+    .nav-search { display: none; }
+    /* Disable the dim-siblings hover effect in mobile menu */
+    .nav-list:hover .nav-item { opacity: 1; }
 
     /* Hero */
     .hero-brand { font-size: clamp(2rem, 6vw, 4rem); }
@@ -1806,21 +1851,38 @@ a.footer-contact-item:hover svg { opacity: 1; }
     /* SEO content */
     .seo-section-box { padding: 2rem; }
     .seo-cta-gradient { padding: 2.5rem; }
+    .seo-hero-text { grid-template-columns: 1fr; gap: 2rem; }
+    .seo-features-grid { grid-template-columns: repeat(2, 1fr); }
+    .seo-industries-grid { grid-template-columns: repeat(2, 1fr); }
+    .seo-faq-grid { grid-template-columns: 1fr; }
 
     /* Video CTA */
     .video-cta { min-height: 55vh; }
 
     /* Confirmation */
     .confirmation-info-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* Booking */
+    .form-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+    .booking-form-actions { flex-wrap: wrap; }
+    .booking-form-actions .btn { min-width: 140px; flex: 1; }
+    .payment-methods { grid-template-columns: repeat(2, 1fr); }
+
+    /* Enterprise header (services page) */
+    .enterprise-header { margin-bottom: 3rem; }
+    .enterprise-subtitle { font-size: 1rem; }
+    .business-cta-note { font-size: 0.8125rem; }
+
+    /* Apply form wrapper (recruitment page) */
+    .apply-form-wrapper { max-width: 100%; }
+
+    /* Service detail h3 spacing */
+    .service-detail-content h3 { margin-top: 1.25rem; margin-bottom: 0.75rem; }
 }
 
 /* ── Small Tablets (900px) ── */
 @media screen and (max-width: 900px) {
     .pricing-card { padding: 2rem; }
-    .seo-hero-text { grid-template-columns: 1fr; gap: 2rem; }
-    .seo-features-grid { grid-template-columns: repeat(2, 1fr); }
-    .seo-industries-grid { grid-template-columns: repeat(2, 1fr); }
-    .seo-faq-grid { grid-template-columns: 1fr; }
     .confirmation-summary-grid { grid-template-columns: 1fr; }
     .dashboard-grid { grid-template-columns: 1fr; }
     .order-details-grid { grid-template-columns: 1fr; }
@@ -1838,24 +1900,9 @@ a.footer-contact-item:hover svg { opacity: 1; }
     .block-text-centered { padding: 3.75rem 0; }
     .community-cta { padding: 3.75rem 0; }
 
-    /* Navigation — mobile overlay */
-    .nav-menu {
-        position: fixed; inset: 0; background: var(--dark-blue);
-        display: flex; align-items: center; justify-content: center;
-        transform: translateX(100%); transition: transform 0.4s var(--ease-out); z-index: 5;
-    }
-    .nav-menu.show-menu { transform: translateX(0); }
-    .nav-list {
-        flex-direction: column; background: none;
-        -webkit-backdrop-filter: none; backdrop-filter: none; padding: 0; gap: 0.25rem;
-    }
+    /* Navigation — further refine for phones */
     .nav-link { font-size: 1.25rem; padding: 0.75rem 1.25rem; }
-    .nav-toggle { display: flex; align-items: center; justify-content: center; }
-    .nav-close {
-        display: flex; align-items: center; justify-content: center;
-        position: absolute; top: 1rem; right: 1rem;
-    }
-    .nav-search { display: none; }
+    .nav-close { top: 1rem; right: 1rem; }
 
     /* Hero */
     .hero { min-height: 100vh; min-height: 100dvh; }
@@ -1971,7 +2018,6 @@ a.footer-contact-item:hover svg { opacity: 1; }
     .business-cta-description { font-size: 1rem; }
 
     /* SEO content */
-    .seo-hero-text { grid-template-columns: 1fr; gap: 2rem; }
     .seo-features-grid { grid-template-columns: 1fr; }
     .seo-industries-grid { grid-template-columns: repeat(2, 1fr); }
     .seo-cta-gradient { padding: 2rem; }
@@ -2199,6 +2245,14 @@ a.footer-contact-item:hover svg { opacity: 1; }
     .seo-industries-grid { grid-template-columns: 1fr; }
     .seo-hero-text h3 { font-size: 1.25rem; }
     .seo-faq-section h3 { font-size: 1.25rem; }
+
+    /* Enterprise header (services page) */
+    .enterprise-header { margin-bottom: 2rem; }
+    .enterprise-subtitle { font-size: 0.9375rem; }
+    .business-cta-note { font-size: 0.75rem; }
+
+    /* Service detail h3 spacing */
+    .service-detail-content h3 { margin-top: 1rem; margin-bottom: 0.5rem; font-size: 1.125rem; }
 
     /* About/Contact grids: further reduce gaps */
     .about-grid { gap: 2rem; }
