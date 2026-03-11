@@ -886,6 +886,7 @@ p { margin-bottom: 1rem; font-weight: 300; line-height: 1.6; }
     justify-content: center;
     margin-bottom: 1.5rem;
     transition: all var(--transition);
+    color: var(--white);
 }
 .business-service-card:hover .business-service-icon {
     background: linear-gradient(135deg, var(--orange) 0%, rgba(var(--orange-rgb), 0.8) 100%);
@@ -893,6 +894,7 @@ p { margin-bottom: 1rem; font-weight: 300; line-height: 1.6; }
 }
 .business-service-icon svg {
     stroke: var(--white);
+    color: var(--white);
     width: 40px;
     height: 40px;
 }
