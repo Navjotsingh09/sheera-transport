@@ -1438,9 +1438,9 @@ a.footer-contact-item:hover svg { opacity: 1; }
     flex-shrink: 0; width: 64px; height: 64px;
     display: flex; align-items: center; justify-content: center;
     background: var(--dark-blue); border-radius: 50%;
-    transition: background var(--transition);
+    transition: background var(--transition); color: var(--white);
 }
-.reason-icon svg { stroke: var(--white); fill: none; transition: all var(--transition); }
+.reason-icon svg { stroke: var(--white); color: var(--white); fill: none; transition: all var(--transition); }
 .reason-content { flex: 1; }
 .reason-title {
     margin-bottom: 0.375rem; font-size: 1rem; text-transform: uppercase;
@@ -1499,7 +1499,7 @@ a.footer-contact-item:hover svg { opacity: 1; }
     color: var(--white); background: var(--dark-blue); border-radius: 50%;
     transition: background var(--transition);
 }
-.service-icon svg { stroke: var(--white); transition: stroke var(--transition); }
+.service-icon svg { stroke: var(--white); color: var(--white); transition: stroke var(--transition); }
 .service-title {
     margin-bottom: 0.75rem; color: var(--dark-blue);
     font-size: 1rem; text-transform: uppercase;
@@ -1525,9 +1525,9 @@ a.footer-contact-item:hover svg { opacity: 1; }
 .service-detail-icon {
     width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;
     background: var(--dark-blue); border-radius: 50%;
-    flex-shrink: 0;
+    flex-shrink: 0; color: var(--white);
 }
-.service-detail-icon svg { stroke: var(--white); }
+.service-detail-icon svg { stroke: var(--white); color: var(--white); }
 .service-detail-title {
     font-size: clamp(1.5rem, 2.5vw, 2rem); margin: 0;
     text-transform: uppercase; letter-spacing: -0.02em;
@@ -1574,7 +1574,7 @@ a.footer-contact-item:hover svg { opacity: 1; }
     color: var(--white); background: var(--dark-blue); border-radius: 50%;
     transition: background var(--transition);
 }
-.feature-icon svg { stroke: var(--white); transition: stroke var(--transition); }
+.feature-icon svg { stroke: var(--white); color: var(--white); transition: stroke var(--transition); }
 .feature-title {
     margin-bottom: 0.5rem; font-size: 1rem; text-transform: uppercase;
     letter-spacing: 0.02em; transition: color var(--transition);
