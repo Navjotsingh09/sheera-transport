@@ -106,17 +106,17 @@ Add these in Vercel Dashboard → Project → Settings → Environment Variables
 
 ### 1. Add Domain in Vercel
 1. Go to Project Settings → Domains
-2. Enter your domain: **seehratransport.co.uk**
-3. Add **www.seehratransport.co.uk** as well
+2. Enter your domain: **seehratransport.com**
+3. Add **www.seehratransport.com** as well
 
 ### 2. Configure DNS Records
 Add these records at your domain registrar:
 
-**For Apex Domain (seehratransport.co.uk):**
+**For Apex Domain (seehratransport.com):**
 ```
 Type: A
 Name: @
-Value: 76.76.19.19
+Value: 76.76.21.21
 ```
 
 **For WWW Subdomain:**

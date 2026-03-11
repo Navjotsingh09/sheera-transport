@@ -141,7 +141,7 @@ if (typeof module !== 'undefined' && module.exports) {
  * 2. Create Property:
  *    - After login, click "Add Site"
  *    - Enter "Seehra Transport" as site name
- *    - Enter "seehra-transport.vercel.app"
+ *    - Enter "seehratransport.com"
  * 
  * 3. Get Widget Code:
  *    - Go to Administration > Property Settings

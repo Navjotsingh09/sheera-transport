@@ -25,13 +25,13 @@ const chatKnowledgeBase = {
     tracking: {
         patterns: ['track', 'tracking', 'where is my', 'status', 'locate', 'find my parcel', 'track order'],
         responses: [
-            "To track your parcel:\n\n1. Visit: seehra-transport.vercel.app/tracking.html\n2. Enter your tracking number\n3. See real-time updates\n\nNeed help? Share your tracking number and I'll assist!"
+            "To track your parcel:\n\n1. Visit: seehratransport.com/tracking.html\n2. Enter your tracking number\n3. See real-time updates\n\nNeed help? Share your tracking number and I'll assist!"
         ]
     },
     booking: {
         patterns: ['book', 'booking', 'schedule', 'arrange delivery', 'send parcel', 'ship', 'courier'],
         responses: [
-            "Ready to book? It's quick and easy! 📝\n\n1. Visit: seehra-transport.vercel.app/booking.html\n2. Fill in collection & delivery details\n3. Choose your service (Standard/Express/Same-Day)\n4. Confirm booking\n\nWould you like me to guide you through the process?"
+            "Ready to book? It's quick and easy! 📝\n\n1. Visit: seehratransport.com/booking.html\n2. Fill in collection & delivery details\n3. Choose your service (Standard/Express/Same-Day)\n4. Confirm booking\n\nWould you like me to guide you through the process?"
         ]
     },
     delivery_times: {
@@ -73,7 +73,7 @@ const chatKnowledgeBase = {
     driver_job: {
         patterns: ['driver', 'job', 'career', 'hiring', 'employment', 'work', 'recruit', 'vacancy'],
         responses: [
-            "Join our team! 🚗\n\nWe're hiring:\n✅ Delivery drivers\n✅ Multi-drop specialists\n✅ Van driver\n\nBenefits:\n💰 Competitive pay\n📅 Flexible schedules\n📱 App-based routing\n\nApply: seehra-transport.vercel.app/recruitment.html"
+            "Join our team! 🚗\n\nWe're hiring:\n✅ Delivery drivers\n✅ Multi-drop specialists\n✅ Van driver\n\nBenefits:\n💰 Competitive pay\n📅 Flexible schedules\n📱 App-based routing\n\nApply: seehratransport.com/recruitment.html"
         ]
     },
     help: {
