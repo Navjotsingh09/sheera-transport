@@ -5,6 +5,8 @@
 :root {
     --dark-blue: #001060;
     --dark-blue-rgb: 0, 16, 96;
+    --orange: #FF7F00;
+    --orange-rgb: 255, 127, 0;
     --red: #FF7F00;
     --white: #FFFFFF;
     --black: #000000;
@@ -138,6 +140,10 @@ p { margin-bottom: 1rem; font-weight: 300; line-height: 1.6; }
     background: var(--dark-blue); color: var(--white); border-color: var(--dark-blue);
 }
 .btn-primary:hover { background: var(--white); color: var(--dark-blue); }
+.btn-orange {
+    background: var(--orange); color: var(--white); border-color: var(--orange);
+}
+.btn-orange:hover { background: #E66A00; border-color: #E66A00; }
 .btn-secondary {
     background: transparent; color: var(--white); border: 2px solid var(--white);
 }
@@ -296,13 +302,13 @@ p { margin-bottom: 1rem; font-weight: 300; line-height: 1.6; }
    QUOTE CALCULATOR
    =================================================================== */
 .quote-calculator {
-    background: var(--dark-blue); padding: 4rem 0;
+    background: var(--orange); padding: 4rem 0;
     position: relative; overflow: hidden;
 }
 .quote-calculator::before {
     content: ''; position: absolute; top: -20%; left: -10%;
     width: 40%; height: 140%;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 60%);
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, transparent 60%);
 }
 .quote-calculator-inner {
     position: relative; z-index: 1;
@@ -334,6 +340,10 @@ p { margin-bottom: 1rem; font-weight: 300; line-height: 1.6; }
 }
 .btn-quote {
     width: 100%; padding: 1rem 2rem; font-size: 1rem;
+    background: var(--dark-blue); color: var(--white); border-color: var(--dark-blue);
+}
+.btn-quote:hover {
+    background: var(--white); color: var(--dark-blue);
 }
 .quote-result {
     max-width: 500px; margin: 2rem auto 0;
@@ -355,7 +365,7 @@ p { margin-bottom: 1rem; font-weight: 300; line-height: 1.6; }
 }
 .quote-price-amount {
     font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 800;
-    color: var(--red); line-height: 1; letter-spacing: -0.02em;
+    color: var(--dark-blue); line-height: 1; letter-spacing: -0.02em;
 }
 .quote-result-note {
     font-size: 0.75rem; color: var(--gray-mid);
@@ -1083,7 +1093,7 @@ p { margin-bottom: 1rem; font-weight: 300; line-height: 1.6; }
 .section-tag {
     display: inline-block; padding: 0.75rem 1rem;
     font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.06em; color: rgba(var(--dark-blue-rgb), 0.5);
+    letter-spacing: 0.06em; color: var(--orange);
     margin-bottom: 1rem;
 }
 .section-tag--white { color: rgba(255,255,255,0.6); }
