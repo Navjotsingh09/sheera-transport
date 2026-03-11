@@ -52,24 +52,78 @@
     <!-- Gallery -->
     <section class="section">
         <div class="container">
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1494412574643-ff8b0fc7ff5a?auto=format&fit=crop&w=1200&q=80" alt="Delivery van in service" loading="lazy">
+            <!-- Gallery Filter -->
+            <div class="gallery-filter">
+                <button class="gallery-filter-btn active" data-filter="all">All</button>
+                <button class="gallery-filter-btn" data-filter="fleet">Fleet</button>
+                <button class="gallery-filter-btn" data-filter="warehouse">Warehouse</button>
+                <button class="gallery-filter-btn" data-filter="delivery">Delivery</button>
+            </div>
+            
+            <div class="gallery-masonry">
+                <div class="gallery-item gallery-item--tall" data-category="fleet">
+                    <img src="https://images.pexels.com/photos/4246120/pexels-photo-4246120.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="White delivery van" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span class="gallery-tag">Fleet</span>
+                        <h3 class="gallery-caption">Modern Delivery Van</h3>
+                        <p class="gallery-subcaption">State-of-the-art vehicles for efficient delivery</p>
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80" alt="Delivery truck on the road" loading="lazy">
+                <div class="gallery-item" data-category="warehouse">
+                    <img src="https://images.pexels.com/photos/4481259/pexels-photo-4481259.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Warehouse parcels" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span class="gallery-tag">Warehouse</span>
+                        <h3 class="gallery-caption">Sorting Hub</h3>
+                        <p class="gallery-subcaption">Organized parcel management</p>
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80" alt="Fleet overview" loading="lazy">
+                <div class="gallery-item" data-category="delivery">
+                    <img src="https://images.pexels.com/photos/4391478/pexels-photo-4391478.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Driver holding packages" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span class="gallery-tag">Delivery</span>
+                        <h3 class="gallery-caption">Professional Drivers</h3>
+                        <p class="gallery-subcaption">Trained and experienced team</p>
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80" alt="Warehouse operations" loading="lazy">
+                <div class="gallery-item gallery-item--wide" data-category="warehouse">
+                    <img src="https://images.pexels.com/photos/4483610/pexels-photo-4483610.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Warehouse operations" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span class="gallery-tag">Warehouse</span>
+                        <h3 class="gallery-caption">Distribution Centre</h3>
+                        <p class="gallery-subcaption">Efficient multi-drop operations</p>
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80" alt="Driver in action" loading="lazy">
+                <div class="gallery-item" data-category="delivery">
+                    <img src="https://images.pexels.com/photos/4391470/pexels-photo-4391470.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Parcels in van" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span class="gallery-tag">Delivery</span>
+                        <h3 class="gallery-caption">Loaded & Ready</h3>
+                        <p class="gallery-subcaption">Optimized routes for multi-drop</p>
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80" alt="Loading process" loading="lazy">
+                <div class="gallery-item" data-category="fleet">
+                    <img src="https://images.pexels.com/photos/6169668/pexels-photo-6169668.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Delivery van on road" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span class="gallery-tag">Fleet</span>
+                        <h3 class="gallery-caption">On The Road</h3>
+                        <p class="gallery-subcaption">Nationwide coverage</p>
+                    </div>
+                </div>
+                <div class="gallery-item gallery-item--tall" data-category="delivery">
+                    <img src="https://images.pexels.com/photos/4246122/pexels-photo-4246122.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Courier with parcel" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span class="gallery-tag">Delivery</span>
+                        <h3 class="gallery-caption">Last-Mile Delivery</h3>
+                        <p class="gallery-subcaption">Door-to-door service</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="warehouse">
+                    <img src="https://images.pexels.com/photos/4483608/pexels-photo-4483608.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Package scanning" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span class="gallery-tag">Technology</span>
+                        <h3 class="gallery-caption">Real-Time Tracking</h3>
+                        <p class="gallery-subcaption">Every parcel scanned and tracked</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -183,5 +237,23 @@
 
     <script src="js/main.js"></script>
     <script src="js/whatsapp-chat.js"></script>
+    <script>
+        // Gallery Filter
+        document.querySelectorAll('.gallery-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+                document.querySelectorAll('.gallery-filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.display = 'block';
+                        item.style.animation = 'fadeIn 0.4s ease-out';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
