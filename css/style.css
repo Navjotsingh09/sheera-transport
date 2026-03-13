@@ -1477,6 +1477,14 @@ a.footer-contact-item:hover svg { opacity: 1; }
     display: flex; gap: 0.625rem; justify-content: center; flex-wrap: wrap;
 }
 
+/* Orange CTA variant */
+.cta-section--orange {
+    background: var(--orange);
+}
+.cta-section--orange::before {
+    background: radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 60%);
+}
+
 /* ===================================================================
    SERVICES PAGE (kept for inner pages)
    =================================================================== */
