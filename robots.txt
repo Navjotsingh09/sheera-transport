@@ -4,7 +4,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://www.seehratransport.com/sitemap.xml
+Sitemap: https://sheera-tau.vercel.app/sitemap.xml
 
 # Crawl-delay (optional, adjust as needed)
 Crawl-delay: 10
