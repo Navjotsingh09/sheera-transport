@@ -48,7 +48,7 @@
       "has": [
         {
           "type": "host",
-          "value": "seehra-transport.vercel.app"
+          "value": "sheera-tau.vercel.app"
         }
       ],
       "destination": "https://www.seehratransport.com/$1",

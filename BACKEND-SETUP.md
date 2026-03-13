@@ -43,8 +43,8 @@ git push
 ```
 
 ## Step 7: Test
-1. Fill contact form at https://seehra-transport.vercel.app/contact.html
-2. Go to https://seehra-transport.vercel.app/admin/ (or /admin/dashboard.html)
+1. Fill contact form at https://sheera-tau.vercel.app/contact.html
+2. Go to https://sheera-tau.vercel.app/admin/ (or /admin/dashboard.html)
 3. Login with: admin@seehratransport.com / Admin@12345
 4. See your form submission!
 

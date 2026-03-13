@@ -429,7 +429,7 @@ For deployment support:
 ## Production URLs
 
 After deployment, your site will be available at:
-- **Vercel URL:** https://seehra-transport.vercel.app
+- **Vercel URL:** https://sheera-tau.vercel.app
 - **Custom Domain:** https://seehratransport.co.uk (after DNS setup)
 - **WWW Subdomain:** https://www.seehratransport.co.uk
 

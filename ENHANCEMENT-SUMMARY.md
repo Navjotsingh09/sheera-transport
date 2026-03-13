@@ -2,7 +2,7 @@
 ## Seehra Transport - Complete Audit & Optimization Report
 
 **Date:** January 2026  
-**Deployment:** https://seehra-transport.vercel.app/  
+**Deployment:** https://sheera-tau.vercel.app/  
 **GitHub:** https://github.com/Navjotsingh09/sheera-transport.git
 
 ---
@@ -328,7 +328,7 @@ const WHATSAPP_NUMBER = '447123456789'; // Replace with your actual number
 ## 🎯 STAFF BACKEND LOGIN INFORMATION
 
 ### Admin Portal Access:
-**URL:** https://seehra-transport.vercel.app/admin/login.html
+**URL:** https://sheera-tau.vercel.app/admin/login.html
 
 ### Demo Credentials:
 | Role | Username | Password |
@@ -385,7 +385,7 @@ const WHATSAPP_NUMBER = '447123456789'; // Replace with your actual number
 
 ### Vercel Deployment:
 **Status:** ✅ Auto-deployment triggered  
-**URL:** https://seehra-transport.vercel.app/  
+**URL:** https://sheera-tau.vercel.app/  
 **Expected:** Live within 30-60 seconds of git push
 
 ---
@@ -579,7 +579,7 @@ Contact the development team or refer to inline code comments for guidance.
 ✅ **Legal Pages** - Privacy Policy (GDPR) + Terms & Conditions  
 ✅ **Enhanced Content** - 150+ lines of SEO-rich text with keywords  
 ✅ **Responsive Design** - Mobile-optimized across all breakpoints  
-✅ **Deployed Successfully** - Live at seehra-transport.vercel.app  
+✅ **Deployed Successfully** - Live at sheera-tau.vercel.app  
 
 ### Total Changes:
 - **16 files modified/created**
@@ -601,7 +601,7 @@ Contact the development team or refer to inline code comments for guidance.
 
 ---
 
-**Deployed:** ✅ https://seehra-transport.vercel.app/  
+**Deployed:** ✅ https://sheera-tau.vercel.app/  
 **GitHub:** ✅ https://github.com/Navjotsingh09/sheera-transport.git  
 **Status:** 🟢 LIVE AND OPERATIONAL
 

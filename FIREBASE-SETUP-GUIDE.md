@@ -85,22 +85,22 @@ git push
 ## 🎉 Done! Now Test It
 
 ### Test Contact Form
-1. Go to: https://seehra-transport.vercel.app/contact.html
+1. Go to: https://sheera-tau.vercel.app/contact.html
 2. Fill and submit
 3. See it appear in admin dashboard
 
 ### Test Recruitment Form
-1. Go to: https://seehra-transport.vercel.app/recruitment.html
+1. Go to: https://sheera-tau.vercel.app/recruitment.html
 2. Fill and submit
 3. See it in admin dashboard
 
 ### Test Booking
-1. Go to: https://seehra-transport.vercel.app/booking.html
+1. Go to: https://sheera-tau.vercel.app/booking.html
 2. Fill and submit
 3. See it in admin dashboard
 
 ### Access Admin Dashboard
-**URL**: https://seehra-transport.vercel.app/admin/forms.html
+**URL**: https://sheera-tau.vercel.app/admin/forms.html
 
 **Login:**
 - Email: `admin@seehratransport.com`
