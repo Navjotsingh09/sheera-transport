@@ -263,8 +263,9 @@ p { margin-bottom: 1rem; font-weight: 300; line-height: 1.6; }
     -webkit-text-wrap: balance;
 }
 .hero-coordinates {
-    font-size: 0.875rem; font-weight: 300; letter-spacing: -0.03em;
+    font-size: 0.875rem; font-weight: 300; letter-spacing: 0.05em;
     color: var(--white); text-align: right; font-variant-numeric: tabular-nums;
+    font-family: inherit;
 }
 
 .hero-hr {
