@@ -41,18 +41,5 @@
     }
   ],
   "cleanUrls": true,
-  "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "sheera-tau.vercel.app"
-        }
-      ],
-      "destination": "https://www.seehratransport.com/$1",
-      "permanent": true
-    }
-  ]
+  "trailingSlash": false
 }
