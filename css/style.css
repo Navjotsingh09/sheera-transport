@@ -1689,7 +1689,9 @@ a.footer-contact-item:hover svg { opacity: 1; }
     background: var(--white); padding: 2.5rem; text-align: center;
     transition: all var(--transition);
 }
-.requirement-card:hover { background: var(--dark-blue); color: var(--white); z-index: 1; }
+.requirement-card:hover { color: var(--white); z-index: 1; }
+.requirement-card:nth-child(odd):hover { background: var(--orange); }
+.requirement-card:nth-child(even):hover { background: var(--dark-blue); }
 .requirement-card:hover .requirement-title { color: var(--white); }
 .requirement-card:hover .requirement-description { color: rgba(255,255,255,0.7); }
 .requirement-card:hover .requirement-icon { color: var(--white); }
