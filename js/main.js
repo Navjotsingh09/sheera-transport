@@ -3,11 +3,43 @@ const navMenu = document.getElementById('nav-menu');
 const navToggle = document.getElementById('nav-toggle');
 const navClose = document.getElementById('nav-close');
 
-if (navToggle) navToggle.addEventListener('click', () => navMenu.classList.add('show-menu'));
-if (navClose) navClose.addEventListener('click', () => navMenu.classList.remove('show-menu'));
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => navMenu.classList.remove('show-menu'));
+let menuScrollY = 0;
+if (navToggle) navToggle.addEventListener('click', () => {
+    menuScrollY = window.scrollY;
+    document.body.style.top = `-${menuScrollY}px`;
+    navMenu.classList.add('show-menu');
+    document.body.classList.add('menu-open');
+    document.documentElement.classList.add('menu-open');
 });
+if (navClose) navClose.addEventListener('click', () => {
+    navMenu.classList.remove('show-menu');
+    document.body.classList.remove('menu-open');
+    document.documentElement.classList.remove('menu-open');
+    document.body.style.top = '';
+    window.scrollTo(0, menuScrollY);
+});
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        navMenu.classList.remove('show-menu');
+        document.body.classList.remove('menu-open');
+        document.documentElement.classList.remove('menu-open');
+        document.body.style.top = '';
+        window.scrollTo(0, menuScrollY);
+    });
+});
+
+
+/* ===== ACTIVE NAV LINK ===== */
+(function setActiveNav() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        const href = link.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+            link.classList.add('active');
+        }
+    });
+})();
 
 /* ===== HEADROOM HEADER ===== */
 const header = document.getElementById('header');
@@ -173,7 +205,9 @@ function validateForm(formId) {
                     result = await submitContactForm(formData);
                 } else if (formId === 'recruitment-form') {
                     const { submitRecruitmentForm } = await import('./firebase-forms.js');
-                    result = await submitRecruitmentForm(formData);
+                    const cvInput = document.getElementById('cv-upload');
+                    const cvFile = cvInput && cvInput.files.length > 0 ? cvInput.files[0] : null;
+                    result = await submitRecruitmentForm(formData, cvFile);
                 }
 
                 if (result && result.success) {
@@ -220,48 +254,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-/* ===== QUOTE CALCULATOR ===== */
+/* ===== QUOTE REQUEST FORM ===== */
 document.addEventListener('DOMContentLoaded', () => {
     const quoteForm = document.getElementById('quote-form');
     const quoteResult = document.getElementById('quote-result');
-    const quotePriceEl = document.getElementById('quote-price');
     const resetBtn = document.getElementById('reset-quote');
 
     if (!quoteForm) return;
 
-    // Pricing matrix (base prices in GBP)
-    const pricing = {
-        'standard': { '0-5': 6.99, '5-10': 8.99, '10-25': 12.99, '25+': 18.99 },
-        'next-day': { '0-5': 12.99, '5-10': 15.99, '10-25': 19.99, '25+': 26.99 },
-        'same-day': { '0-5': 24.99, '5-10': 29.99, '10-25': 34.99, '25+': 44.99 }
-    };
-
-    quoteForm.addEventListener('submit', (e) => {
+    quoteForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const fromPostcode = document.getElementById('from-postcode').value.trim();
-        const toPostcode = document.getElementById('to-postcode').value.trim();
-        const serviceType = document.getElementById('service-type').value;
-        const packageWeight = document.getElementById('package-weight').value;
+        const submitBtn = document.getElementById('quote-submit-btn');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
 
-        if (!fromPostcode || !toPostcode) {
-            alert('Please enter both postcodes');
-            return;
+        const data = {
+            _subject: 'New Quote Request — Seehra Transport Website',
+            _cc: 'navjot.singh@5rv.digital',
+            _template: 'table',
+            'Name': document.getElementById('quote-name').value.trim(),
+            'Email': document.getElementById('quote-email').value.trim(),
+            'Phone': (document.getElementById('quote-phone').value || '').trim() || 'Not provided',
+            'Collection Postcode': document.getElementById('from-postcode').value.trim(),
+            'Delivery Postcode': document.getElementById('to-postcode').value.trim(),
+            'Service Type': document.getElementById('service-type').value,
+            'Package Weight': document.getElementById('package-weight').value,
+            'Additional Details': (document.getElementById('quote-details').value || '').trim() || 'None'
+        };
+
+        try {
+            const response = await fetch('https://formsubmit.co/ajax/info@seehratransport.com', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                quoteForm.style.display = 'none';
+                quoteResult.style.display = 'block';
+                quoteResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                throw new Error('Server error');
+            }
+        } catch (error) {
+            console.error('Quote submission failed:', error);
+            alert('Sorry, something went wrong. Please try again or email us at info@seehratransport.com');
+        } finally {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
         }
-
-        // Calculate price
-        const basePrice = pricing[serviceType][packageWeight];
-        const distance = Math.random() * 50 + 10; // Simulate distance calculation
-        const distanceMultiplier = 1 + (distance / 200);
-        const finalPrice = (basePrice * distanceMultiplier).toFixed(2);
-
-        // Display result
-        quotePriceEl.textContent = '£' + finalPrice;
-        quoteForm.style.display = 'none';
-        quoteResult.style.display = 'block';
-
-        // Scroll to result
-        quoteResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     if (resetBtn) {

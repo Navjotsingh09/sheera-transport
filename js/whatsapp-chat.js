@@ -49,7 +49,7 @@ const chatKnowledgeBase = {
     business: {
         patterns: ['business', 'b2b', 'corporate', 'company', 'bulk', 'contract', 'multi-drop'],
         responses: [
-            "Perfect for businesses! 🏢\n\nWe offer:\n✅ Multi-drop services\n✅ Volume discounts\n✅ Dedicated account manager\n✅ API integration\n✅ Flexible invoicing\n\nContact us for a custom B2B solution: contact@seehra-transport.co.uk"
+            "Perfect for businesses! 🏢\n\nWe offer:\n✅ Multi-drop services\n✅ Volume discounts\n✅ Dedicated account manager\n✅ API integration\n✅ Flexible invoicing\n\nContact us for a custom B2B solution: info@seehratransport.com"
         ]
     },
     payment: {
@@ -67,7 +67,7 @@ const chatKnowledgeBase = {
     contact: {
         patterns: ['contact', 'phone', 'email', 'call', 'speak to', 'talk to', 'reach', 'customer service'],
         responses: [
-            "Get in touch with us:\n\n📧 Email: info@seehra-transport.co.uk\n📞 Phone: +44 1234 567890\n💬 WhatsApp: Right here!\n🕐 Hours: Mon-Fri 8AM-6PM, Sat 9AM-1PM\n\nHow can we help you today?"
+            "Get in touch with us:\n\n📧 Email: info@seehratransport.com\n📞 Phone: +44 1234 567890\n💬 WhatsApp: Right here!\n🕐 Hours: Mon-Fri 8AM-6PM, Sat 9AM-1PM\n\nHow can we help you today?"
         ]
     },
     driver_job: {
