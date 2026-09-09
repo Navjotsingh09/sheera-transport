@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-/* ===== QUOTE REQUEST FORM ===== */
+/* ===== BUSINESS ENQUIRY FORM ===== */
 document.addEventListener('DOMContentLoaded', () => {
     const quoteForm = document.getElementById('quote-form');
     const quoteResult = document.getElementById('quote-result');
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
 
         const data = {
-            _subject: 'New Quote Request — Seehra Transport Website',
+            _subject: 'New Business Enquiry — Seehra Transport Website',
             _cc: 'navjot.singh@5rv.digital',
             _template: 'table',
             'Name': document.getElementById('quote-name').value.trim(),

@@ -12,17 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dateInput.value = tomorrow.toISOString().split('T')[0];
     }
 
-    // Update price when service type changes
-    const serviceSelect = document.getElementById('service-selection');
-    if (serviceSelect) {
-        serviceSelect.addEventListener('change', updatePrice);
-    }
-
-    // Update insurance when package value changes
-    const valueInput = document.getElementById('package-value');
-    if (valueInput) {
-        valueInput.addEventListener('input', updatePrice);
-    }
 });
 
 function nextStep(step) {
@@ -44,7 +33,6 @@ function nextStep(step) {
     // If step 3, populate summary
     if (currentStep === 3) {
         populateSummary();
-        updatePrice();
     }
 
     // Scroll to top
@@ -132,32 +120,6 @@ function formatDate(dateString) {
     return date.toLocaleDateString('en-GB', options);
 }
 
-function updatePrice() {
-    const serviceType = document.getElementById('service-selection').value;
-    const packageValue = parseFloat(document.getElementById('package-value').value) || 0;
-
-    // Base prices
-    const prices = {
-        'standard': 6.99,
-        'next-day': 12.99,
-        'same-day': 24.99
-    };
-
-    const basePrice = prices[serviceType] || prices['next-day'];
-    
-    // Calculate insurance (2% of package value, minimum £1, maximum £10)
-    let insurance = Math.max(1, Math.min(10, packageValue * 0.02));
-    if (packageValue === 0) insurance = 1;
-
-    const total = basePrice + insurance;
-
-    // Update display
-    document.getElementById('price-base').textContent = '£' + basePrice.toFixed(2);
-    document.getElementById('price-insurance').textContent = '£' + insurance.toFixed(2);
-    document.getElementById('price-total').textContent = '£' + total.toFixed(2);
-    document.getElementById('final-price').textContent = total.toFixed(2);
-}
-
 // Form submission
 document.getElementById('booking-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -203,8 +165,8 @@ document.getElementById('booking-form')?.addEventListener('submit', async (e) =>
             fragile: document.getElementById('package-fragile').checked
         },
         service: document.getElementById('service-selection').value,
-        paymentMethod: document.querySelector('input[name="payment-method"]:checked').value,
-        totalPrice: parseFloat(document.getElementById('final-price').textContent)
+        paymentMethod: 'business-enquiry',
+        totalPrice: null
     };
 
     console.log('Booking Data:', bookingData);

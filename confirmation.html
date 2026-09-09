@@ -226,10 +226,9 @@
                         ${bookingData.package.fragile ? '<p style="color: var(--red);"><strong>⚠️ FRAGILE</strong></p>' : ''}
                     </div>
                     <div class="confirmation-summary-section">
-                        <h4>Service & Payment</h4>
+                        <h4>Service & Enquiry</h4>
                         <p><strong>Service:</strong> ${bookingData.service === 'next-day' ? 'Next Day Delivery' : bookingData.service === 'same-day' ? 'Same Day Delivery' : 'Standard Delivery'}</p>
-                        <p><strong>Total Paid:</strong> £${bookingData.totalPrice.toFixed(2)}</p>
-                        <p><strong>Payment:</strong> ${bookingData.paymentMethod === 'card' ? 'Card' : bookingData.paymentMethod === 'paypal' ? 'PayPal' : 'Business Account'}</p>
+                        <p><strong>Next step:</strong> Our team will contact you to discuss the right business delivery solution.</p>
                     </div>
                 </div>
             `;

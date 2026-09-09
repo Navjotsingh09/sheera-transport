@@ -163,7 +163,6 @@ async function submitBookingForm(formData) {
       service: formData.service,
       package: formData.package,
       specialRequirements: formData.specialRequirements || "",
-      price: parseFloat(formData.price || formData.totalPrice),
       submittedAt: serverTimestamp(),
       status: "pending_confirmation",
       paymentStatus: "pending",
@@ -177,7 +176,7 @@ async function submitBookingForm(formData) {
       name: formData.collection?.name || 'Customer',
       email: formData.collection?.email || '',
       phone: formData.collection?.phone || '',
-      message: `Service: ${formData.service}\nFrom: ${formData.collection?.address?.postcode || ''}\nTo: ${formData.delivery?.address?.postcode || ''}\nPrice: £${formData.price || formData.totalPrice}`,
+      message: `Business enquiry for ${formData.service}\nFrom: ${formData.collection?.address?.postcode || ''}\nTo: ${formData.delivery?.address?.postcode || ''}`,
       submissionId: docRef.id
     });
 

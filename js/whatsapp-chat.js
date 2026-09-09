@@ -19,7 +19,7 @@ const chatKnowledgeBase = {
     pricing: {
         patterns: ['price', 'cost', 'how much', 'quote', 'pricing', 'rates', 'charge', 'fee'],
         responses: [
-            "Our pricing is transparent and competitive:\n\n📦 Standard Delivery: From £4.99\n⚡ Express Delivery: From £7.99\n🚀 Same-Day: From £12.99\n\nFor an accurate quote, please visit our booking page or share your delivery details!"
+            "We provide tailored delivery solutions for businesses. Please share your delivery requirements and our team will respond with the right solution."
         ]
     },
     tracking: {
@@ -31,7 +31,7 @@ const chatKnowledgeBase = {
     booking: {
         patterns: ['book', 'booking', 'schedule', 'arrange delivery', 'send parcel', 'ship', 'courier'],
         responses: [
-            "Ready to book? It's quick and easy! 📝\n\n1. Visit: sheera-tau.vercel.app/booking.html\n2. Fill in collection & delivery details\n3. Choose your service (Standard/Express/Same-Day)\n4. Confirm booking\n\nWould you like me to guide you through the process?"
+            "Tell us about your collection and delivery requirements through our enquiry form: sheera-tau.vercel.app/contact.html\n\nOur team will review the details and help you arrange the right business delivery solution."
         ]
     },
     delivery_times: {
@@ -73,7 +73,7 @@ const chatKnowledgeBase = {
     driver_job: {
         patterns: ['driver', 'job', 'career', 'hiring', 'employment', 'work', 'recruit', 'vacancy'],
         responses: [
-            "Join our team! 🚗\n\nWe're hiring:\n✅ Delivery drivers\n✅ Multi-drop specialists\n✅ Van driver\n\nBenefits:\n💰 Competitive pay\n📅 Flexible schedules\n📱 App-based routing\n\nApply: sheera-tau.vercel.app/recruitment.html"
+            "We're looking for self-employed delivery drivers.\n\nBenefits:\n✅ £165 to £185 plus VAT per day\n✅ Weekly pay\n✅ No experience required\n✅ Paid training\n✅ Van and insurance options\n\nApply: sheera-tau.vercel.app/recruitment.html"
         ]
     },
     help: {
@@ -144,10 +144,9 @@ class WhatsAppChatWidget {
 
                     <!-- Quick Replies -->
                     <div class="whatsapp-quick-replies" id="whatsapp-quick-replies">
-                        <button class="quick-reply-btn" data-message="Get a quote">💰 Get Quote</button>
+                        <button class="quick-reply-btn" data-message="Make a business enquiry">✉️ Enquire</button>
                         <button class="quick-reply-btn" data-message="Track my parcel">📦 Track Parcel</button>
                         <button class="quick-reply-btn" data-message="Book a delivery">🚚 Book Now</button>
-                        <button class="quick-reply-btn" data-message="Pricing information">💳 Pricing</button>
                     </div>
 
                     <!-- Input -->

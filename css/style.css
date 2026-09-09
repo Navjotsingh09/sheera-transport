@@ -359,6 +359,23 @@ body.menu-open {
     letter-spacing: 0.04em; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem;
 }
 
+.hero-proof { background: var(--dark-blue); color: var(--white); }
+.hero-proof-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; }
+.hero-proof-grid > div { padding: 1.5rem 1rem; text-align: center; background: rgba(255,255,255,0.04); }
+.hero-proof-grid strong { display: block; color: var(--orange); font-size: clamp(1.35rem, 3vw, 2rem); }
+.hero-proof-grid span { display: block; margin-top: 0.35rem; color: rgba(255,255,255,0.75); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.testimonial-placeholder { background: var(--gray-bg); text-align: center; }
+.testimonial-placeholder .industry-intro { max-width: 680px; margin: 0 auto; }
+.benefit-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem 2rem; max-width: 900px; margin: 2rem auto 0; padding: 0; list-style: none; }
+.benefit-list li { padding: 0.75rem 1rem; border-left: 3px solid var(--orange); background: var(--white); font-weight: 600; }
+.recruitment-faq { background: var(--white); }
+.recruitment-faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 960px; margin: 0 auto; }
+.recruitment-faq-item { border: 1px solid rgba(var(--dark-blue-rgb), 0.14); border-radius: var(--radius-sm); padding: 1rem 1.25rem; background: var(--gray-bg); }
+.recruitment-faq-item summary { cursor: pointer; color: var(--dark-blue); font-weight: 700; }
+.recruitment-faq-item p { margin: 0.75rem 0 0; color: var(--gray-mid); line-height: 1.6; }
+.business-enquiry-note { display: flex; gap: 0.75rem; flex-direction: column; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border-left: 3px solid var(--orange); background: rgba(255,255,255,0.08); color: var(--white); }
+.business-enquiry-note span { color: rgba(255,255,255,0.8); }
+
 /* ===================================================================
    QUOTE CALCULATOR
    =================================================================== */
@@ -2546,6 +2563,11 @@ a.footer-contact-item:hover svg { opacity: 1; }
 
     /* Help cards */
     .help-card-icon { width: 52px; height: 52px; }
+}
+
+@media screen and (max-width: 767px) {
+    .hero-proof-grid { grid-template-columns: repeat(2, 1fr); }
+    .benefit-list, .recruitment-faq-grid { grid-template-columns: 1fr; }
 }
 
 /* ── Extra Small Phones (359px) ── */

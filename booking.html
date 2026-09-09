@@ -255,51 +255,40 @@
                         <div class="form-group">
                             <label class="form-label" for="service-selection">Service Type *</label>
                             <select class="form-select" id="service-selection" aria-label="Service type" required>
-                                <option value="standard">Standard Delivery (3-5 days) - £6.99</option>
-                                <option value="next-day">Next Day Delivery - £12.99</option>
-                                <option value="same-day">Same Day Delivery - £24.99</option>
+                                <option value="standard">Standard Delivery</option>
+                                <option value="next-day">Next Day Delivery</option>
+                                <option value="same-day">Same Day Delivery</option>
                             </select>
                         </div>
 
-                        <!-- Price Breakdown -->
-                        <div class="price-breakdown">
-                            <div class="price-row">
-                                <span>Base Price:</span>
-                                <span id="price-base">£12.99</span>
-                            </div>
-                            <div class="price-row">
-                                <span>Insurance (Based on value):</span>
-                                <span id="price-insurance">£2.00</span>
-                            </div>
-                            <div class="price-row price-row-total">
-                                <span>Total:</span>
-                                <span id="price-total">£14.99</span>
-                            </div>
+                        <div class="business-enquiry-note">
+                            <strong>Business enquiry</strong>
+                            <span>We will review your delivery details and contact you to discuss the right solution for your requirements.</span>
                         </div>
 
-                        <!-- Payment Method -->
-                        <div class="form-divider">Payment Method</div>
+                        <!-- Business account details -->
+                        <div class="form-divider">Business Account Details</div>
 
                         <div class="payment-methods">
                             <label class="payment-method">
                                 <input type="radio" name="payment-method" value="card" checked>
                                 <div class="payment-method-content">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="1" y="4" width="22" height="16" rx="2" stroke="currentColor" stroke-width="2"/><line x1="1" y1="10" x2="23" y2="10" stroke="currentColor" stroke-width="2"/></svg>
-                                    <span>Credit / Debit Card</span>
+                                    <span>Our team will confirm the next steps</span>
                                 </div>
                             </label>
                             <label class="payment-method">
                                 <input type="radio" name="payment-method" value="paypal">
                                 <div class="payment-method-content">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.15a.804.804 0 01-.795.68H7.72a.483.483 0 01-.477-.558L7.418 21c.085-.546.105-.674.166-1.07.253-1.638.53-3.308.784-4.95a.804.804 0 01.794-.68h1.913c3.855 0 6.32-1.868 7.19-5.443a6.062 6.062 0 00-.198-.379z" stroke="currentColor" stroke-width="1.5"/></svg>
-                                    <span>PayPal</span>
+                                    <span>Tailored business arrangements available</span>
                                 </div>
                             </label>
                             <label class="payment-method">
                                 <input type="radio" name="payment-method" value="account">
                                 <div class="payment-method-content">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                                    <span>Business Account (NET-30)</span>
+                                    <span>Account and invoicing options discussed directly</span>
                                 </div>
                             </label>
                         </div>
@@ -316,7 +305,7 @@
                             <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Back</button>
                             <button type="submit" class="btn btn-primary btn-large">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="margin-right: 0.5rem;"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                                Confirm & Pay £<span id="final-price">14.99</span>
+                                Submit Business Enquiry
                             </button>
                         </div>
                     </div>
