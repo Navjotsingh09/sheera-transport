@@ -276,12 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
             _template: 'table',
             'Name': document.getElementById('quote-name').value.trim(),
             'Email': document.getElementById('quote-email').value.trim(),
-            'Phone': (document.getElementById('quote-phone').value || '').trim() || 'Not provided',
-            'Collection Postcode': document.getElementById('from-postcode').value.trim(),
-            'Delivery Postcode': document.getElementById('to-postcode').value.trim(),
-            'Service Type': document.getElementById('service-type').value,
-            'Package Weight': document.getElementById('package-weight').value,
-            'Additional Details': (document.getElementById('quote-details').value || '').trim() || 'None'
+            'Phone': document.getElementById('quote-phone').value.trim(),
+            'Company': (document.getElementById('quote-company').value || '').trim() || 'Not provided',
+            'Service Interest': document.getElementById('quote-service').value,
+            'Message': document.getElementById('quote-message').value.trim()
         };
 
         try {

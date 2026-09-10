@@ -170,7 +170,7 @@
                 <form class="quote-form" id="quote-form">
                     <div class="quote-form-grid">
                         <div class="form-group">
-                            <label class="form-label">Your Name *</label>
+                            <label class="form-label">Full Name *</label>
                             <input type="text" class="form-input" id="quote-name" name="name" placeholder="Full name" required>
                         </div>
                         <div class="form-group">
@@ -178,37 +178,28 @@
                             <input type="email" class="form-input" id="quote-email" name="email" placeholder="you@example.com" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" class="form-input" id="quote-phone" name="phone" placeholder="e.g. 07700 000000">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-input" id="quote-phone" name="phone" placeholder="e.g. 07700 000000" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Collection Postcode *</label>
-                            <input type="text" class="form-input" id="from-postcode" name="collection_postcode" placeholder="e.g. SW1A 1AA" required>
+                            <label class="form-label">Company Name</label>
+                            <input type="text" class="form-input" id="quote-company" name="company" placeholder="Your company name">
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Delivery Postcode *</label>
-                            <input type="text" class="form-input" id="to-postcode" name="delivery_postcode" placeholder="e.g. M1 1AA" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Service Type</label>
-                            <select class="form-select" id="service-type" name="service_type">
-                                <option value="Standard (2-3 days)">Standard (2-3 days)</option>
-                                <option value="Next Day">Next Day</option>
-                                <option value="Same Day">Same Day</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Package Weight</label>
-                            <select class="form-select" id="package-weight" name="package_weight">
-                                <option value="Up to 5kg">Up to 5kg</option>
-                                <option value="5-10kg">5-10kg</option>
-                                <option value="10-25kg">10-25kg</option>
-                                <option value="Over 25kg">Over 25kg</option>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">Service Interest *</label>
+                            <select class="form-select" id="quote-service" name="service" required>
+                                <option value="">Please select...</option>
+                                <option value="multi-drop">Multi-Drop Delivery</option>
+                                <option value="last-mile">Last-Mile Logistics</option>
+                                <option value="flexible">Flexible Solutions</option>
+                                <option value="custom">Custom Requirements</option>
+                                <option value="enquiry">Business Enquiry</option>
+                                <option value="other">Other Enquiry</option>
                             </select>
                         </div>
                         <div class="form-group" style="grid-column: 1 / -1;">
-                            <label class="form-label">Additional Details</label>
-                            <textarea class="form-input" id="quote-details" name="details" rows="3" placeholder="Number of parcels, dimensions, special requirements..."></textarea>
+                            <label class="form-label">Message *</label>
+                            <textarea class="form-textarea" id="quote-message" name="message" rows="3" placeholder="Please provide details about your delivery requirements..." required></textarea>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-quote" id="quote-submit-btn">Send Enquiry</button>
