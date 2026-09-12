@@ -179,7 +179,7 @@ document.getElementById('booking-form')?.addEventListener('submit', async (e) =>
 
     try {
         // Submit to Firebase
-        const { submitBookingForm } = await import('./firebase-forms.js');
+        const { submitBookingForm } = await import('./supabase-forms.js');
         const result = await submitBookingForm(bookingData);
 
         if (result && result.success) {

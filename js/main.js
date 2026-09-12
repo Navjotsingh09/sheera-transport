@@ -198,13 +198,13 @@ function validateForm(formId) {
                     formData[input.name] = input.value;
                 });
 
-                // Submit to Firebase
+                // Submit to Supabase + Web3Forms
                 let result;
                 if (formId === 'contact-form') {
-                    const { submitContactForm } = await import('./firebase-forms.js');
+                    const { submitContactForm } = await import('./supabase-forms.js');
                     result = await submitContactForm(formData);
                 } else if (formId === 'recruitment-form') {
-                    const { submitRecruitmentForm } = await import('./firebase-forms.js');
+                    const { submitRecruitmentForm } = await import('./supabase-forms.js');
                     const cvInput = document.getElementById('cv-upload');
                     const cvFile = cvInput && cvInput.files.length > 0 ? cvInput.files[0] : null;
                     result = await submitRecruitmentForm(formData, cvFile);

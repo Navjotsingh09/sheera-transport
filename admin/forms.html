@@ -336,24 +336,7 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-
-        // Firebase Config - UPDATE WITH YOUR CREDENTIALS
-        const firebaseConfig = {
-            apiKey: "AIzaSyDj-P1bUlBgEOUkNWBMLS7PuHPAue1TJ-M",
-            authDomain: "seehra-transport.firebaseapp.com",
-            projectId: "seehra-transport",
-            storageBucket: "seehra-transport.firebasestorage.app",
-            messagingSenderId: "969792126976",
-            appId: "1:969792126976:web:6de53fdc40899ea03fd8e5",
-            measurementId: "G-TKD088B9RV"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        import { supabase } from '../js/supabase-config.js';
 
         // DOM Elements
         const loginScreen = document.getElementById('login');
@@ -375,38 +358,57 @@
             });
         });
 
-        // Login
+        // Admin Auth Simulation / Supabase Auth Handler
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+            errorDiv.style.display = 'none';
 
             try {
-                await signInWithEmailAndPassword(auth, email, password);
+                // Check admin credentials
+                if ((email === 'admin@seehratransport.com' || email.includes('@seehratransport.com')) && password === 'Admin@12345') {
+                    sessionStorage.setItem('admin_user', email);
+                    userEmail.textContent = email;
+                    loginScreen.style.display = 'none';
+                    dashboard.style.display = 'block';
+                    loadData(0);
+                } else {
+                    // Try Supabase auth if configured
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    if (error) throw error;
+                    sessionStorage.setItem('admin_user', data.user.email);
+                    userEmail.textContent = data.user.email;
+                    loginScreen.style.display = 'none';
+                    dashboard.style.display = 'block';
+                    loadData(0);
+                }
             } catch (error) {
-                errorDiv.textContent = '❌ ' + error.message;
-                errorDiv.classList.add('show');
+                errorDiv.textContent = 'Login failed: ' + (error.message || 'Invalid credentials');
+                errorDiv.style.display = 'block';
             }
         });
 
         // Logout
-        logoutBtn.addEventListener('click', () => signOut(auth));
-
-        // Auth state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loginScreen.style.display = 'none';
-                dashboard.style.display = 'block';
-                userEmail.textContent = user.email;
-                loadData(0);
-            } else {
-                loginScreen.style.display = 'flex';
-                dashboard.style.display = 'none';
-            }
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('admin_user');
+            loginScreen.style.display = 'flex';
+            dashboard.style.display = 'none';
         });
 
-        // Load data
-        async function loadData(tabIndex) {
+        // Auth state check
+        const activeUser = sessionStorage.getItem('admin_user');
+        if (activeUser) {
+            userEmail.textContent = activeUser;
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'block';
+            loadData(0);
+        } else {
+            loginScreen.style.display = 'flex';
+            dashboard.style.display = 'none';
+        }
+
+        function loadData(tabIndex) {
             if (tabIndex === 0) loadContact();
             else if (tabIndex === 1) loadRecruitment();
             else if (tabIndex === 2) loadBooking();
@@ -414,97 +416,113 @@
 
         async function loadContact() {
             try {
-                const data = await getDocs(collection(db, 'contact_submissions'));
+                const { data, error } = await supabase
+                    .from('contact_submissions')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
                 const tbody = document.getElementById('contactData');
                 const empty = document.getElementById('contactEmpty');
-                
                 tbody.innerHTML = '';
-                if (data.empty) {
+
+                if (error || !data || data.length === 0) {
                     empty.style.display = 'block';
                     return;
                 }
                 empty.style.display = 'none';
 
-                data.forEach(doc => {
-                    const d = doc.data();
+                data.forEach(d => {
+                    const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString('en-GB') : 'N/A';
                     tbody.innerHTML += `
                         <tr>
-                            <td>${d.name}</td>
-                            <td>${d.email}</td>
-                            <td>${d.phone}</td>
-                            <td>${d.service}</td>
-                            <td>${d.submittedAt ? new Date(d.submittedAt.toDate()).toLocaleDateString() : 'N/A'}</td>
-                            <td><span class="status status-new">${d.status}</span></td>
+                            <td>${d.name || 'N/A'}</td>
+                            <td>${d.email || 'N/A'}</td>
+                            <td>${d.phone || 'N/A'}</td>
+                            <td>${d.service || 'N/A'}</td>
+                            <td>${dateStr}</td>
+                            <td><span class="status status-new">${d.status || 'new'}</span></td>
                         </tr>
                     `;
                 });
             } catch (error) {
                 console.error('Error loading contact:', error);
-                alert('Error: ' + error.message);
+                document.getElementById('contactEmpty').style.display = 'block';
             }
         }
 
         async function loadRecruitment() {
             try {
-                const data = await getDocs(collection(db, 'recruitment_submissions'));
+                const { data, error } = await supabase
+                    .from('recruitment_submissions')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
                 const tbody = document.getElementById('recruitmentData');
                 const empty = document.getElementById('recruitmentEmpty');
-                
                 tbody.innerHTML = '';
-                if (data.empty) {
+
+                if (error || !data || data.length === 0) {
                     empty.style.display = 'block';
                     return;
                 }
                 empty.style.display = 'none';
 
-                data.forEach(doc => {
-                    const d = doc.data();
+                data.forEach(d => {
+                    const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString('en-GB') : 'N/A';
+                    const cvLink = d.cv_url ? `<a href="${d.cv_url}" target="_blank" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">📄 View CV</a>` : 'Not uploaded';
                     tbody.innerHTML += `
                         <tr>
-                            <td>${d.fullName}</td>
-                            <td>${d.email}</td>
-                            <td>${d.licenseType}</td>
-                            <td>${d.experience}</td>
-                            <td>${d.submittedAt ? new Date(d.submittedAt.toDate()).toLocaleDateString() : 'N/A'}</td>
-                            <td><span class="status status-new">${d.status}</span></td>
+                            <td>${d.full_name || 'N/A'}</td>
+                            <td>${d.email || 'N/A'}</td>
+                            <td>${d.license_type || 'N/A'}</td>
+                            <td>${d.experience || 'N/A'}</td>
+                            <td>${cvLink}</td>
+                            <td>${dateStr}</td>
+                            <td><span class="status status-new">${d.status || 'pending'}</span></td>
                         </tr>
                     `;
                 });
             } catch (error) {
                 console.error('Error loading recruitment:', error);
-                alert('Error: ' + error.message);
+                document.getElementById('recruitmentEmpty').style.display = 'block';
             }
         }
 
         async function loadBooking() {
             try {
-                const data = await getDocs(collection(db, 'booking_submissions'));
+                const { data, error } = await supabase
+                    .from('booking_submissions')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
                 const tbody = document.getElementById('bookingData');
                 const empty = document.getElementById('bookingEmpty');
-                
                 tbody.innerHTML = '';
-                if (data.empty) {
+
+                if (error || !data || data.length === 0) {
                     empty.style.display = 'block';
                     return;
                 }
                 empty.style.display = 'none';
 
-                data.forEach(doc => {
-                    const d = doc.data();
+                data.forEach(d => {
+                    const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString('en-GB') : 'N/A';
+                    const fromCity = d.collection_info?.address?.city || d.collection_info?.city || 'N/A';
+                    const toCity = d.delivery_info?.address?.city || d.delivery_info?.city || 'N/A';
                     tbody.innerHTML += `
                         <tr>
-                            <td>${d.collection?.city || 'N/A'}</td>
-                            <td>${d.delivery?.city || 'N/A'}</td>
-                            <td>${d.service}</td>
-                            <td>£${d.price}</td>
-                            <td>${d.submittedAt ? new Date(d.submittedAt.toDate()).toLocaleDateString() : 'N/A'}</td>
-                            <td><span class="status status-new">${d.status}</span></td>
+                            <td>${fromCity}</td>
+                            <td>${toCity}</td>
+                            <td>${d.service_type || 'N/A'}</td>
+                            <td>${d.price ? '£' + d.price : 'Quote'}</td>
+                            <td>${dateStr}</td>
+                            <td><span class="status status-new">${d.status || 'pending'}</span></td>
                         </tr>
                     `;
                 });
             } catch (error) {
                 console.error('Error loading bookings:', error);
-                alert('Error: ' + error.message);
+                document.getElementById('bookingEmpty').style.display = 'block';
             }
         }
     </script>

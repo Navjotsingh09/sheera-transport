@@ -34,7 +34,7 @@ const TAWK_WIDGET_ID = 'default'; // Example: 'default' or '1a2b3c4d5e6f7g8h'
         s0.parentNode.insertBefore(s1, s0);
     })();
 
-    // Customize Tawk.to widget
+    // Customise Tawk.to widget
     Tawk_API.onLoad = function() {
         console.log('✅ Tawk.to Live Chat loaded successfully');
         
@@ -45,7 +45,7 @@ const TAWK_WIDGET_ID = 'default'; // Example: 'default' or '1a2b3c4d5e6f7g8h'
             'hash': ''
         }, function(error) {});
         
-        // Customize bubble position (right, bottom)
+        // Customise bubble position (right, bottom)
         Tawk_API.customStyle = {
             visibility: {
                 desktop: {
@@ -153,7 +153,7 @@ if (typeof module !== 'undefined' && module.exports) {
  *    - Replace TAWK_PROPERTY_ID with your actual ID
  *    - Replace TAWK_WIDGET_ID if you have a custom one
  * 
- * 5. Customize Colors (optional):
+ * 5. Customise Colors (optional):
  *    - In Tawk.to dashboard go to Appearance > Widget
  *    - Set Primary Color: #001060 (Seehra Transport Blue)
  *    - Set Button Color: #FF1500 (Seehra Transport Red)
