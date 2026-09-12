@@ -131,6 +131,7 @@
                     </div>
                     <h3 class="requirement-title">Delivery Driver</h3>
                     <p class="requirement-description"><strong>Avonmouth</strong><br>£175&ndash;£195 per day + VAT + fuel allowance</p>
+                    <a href="#apply" onclick="applyForRole('Delivery Driver - Avonmouth')" class="btn btn-primary btn-small card-apply-btn">Apply Now &rarr;</a>
                 </div>
                 <div class="requirement-card">
                     <div class="requirement-icon">
@@ -138,6 +139,7 @@
                     </div>
                     <h3 class="requirement-title">Delivery Driver</h3>
                     <p class="requirement-description"><strong>Birmingham</strong><br>£165&ndash;£185 per day + VAT + fuel allowance</p>
+                    <a href="#apply" onclick="applyForRole('Delivery Driver - Birmingham')" class="btn btn-primary btn-small card-apply-btn">Apply Now &rarr;</a>
                 </div>
                 <div class="requirement-card">
                     <div class="requirement-icon">
@@ -145,6 +147,7 @@
                     </div>
                     <h3 class="requirement-title">Delivery Driver</h3>
                     <p class="requirement-description"><strong>Bridgwater</strong><br>£175&ndash;£195 per day + VAT + fuel allowance</p>
+                    <a href="#apply" onclick="applyForRole('Delivery Driver - Bridgwater')" class="btn btn-primary btn-small card-apply-btn">Apply Now &rarr;</a>
                 </div>
                 <div class="requirement-card">
                     <div class="requirement-icon">
@@ -152,6 +155,7 @@
                     </div>
                     <h3 class="requirement-title">Delivery Driver</h3>
                     <p class="requirement-description"><strong>Bristol</strong><br>£175&ndash;£195 per day + VAT + fuel allowance</p>
+                    <a href="#apply" onclick="applyForRole('Delivery Driver - Bristol')" class="btn btn-primary btn-small card-apply-btn">Apply Now &rarr;</a>
                 </div>
                 <div class="requirement-card">
                     <div class="requirement-icon">
@@ -159,6 +163,7 @@
                     </div>
                     <h3 class="requirement-title">Delivery Driver</h3>
                     <p class="requirement-description"><strong>Honiton</strong><br>£180&ndash;£200 per day + VAT + fuel allowance</p>
+                    <a href="#apply" onclick="applyForRole('Delivery Driver - Honiton')" class="btn btn-primary btn-small card-apply-btn">Apply Now &rarr;</a>
                 </div>
                 <div class="requirement-card">
                     <div class="requirement-icon">
@@ -166,6 +171,7 @@
                     </div>
                     <h3 class="requirement-title">Delivery Driver</h3>
                     <p class="requirement-description"><strong>Liskeard</strong><br>£185 per day + VAT + fuel allowance</p>
+                    <a href="#apply" onclick="applyForRole('Delivery Driver - Liskeard')" class="btn btn-primary btn-small card-apply-btn">Apply Now &rarr;</a>
                 </div>
                 <div class="requirement-card">
                     <div class="requirement-icon">
@@ -173,6 +179,7 @@
                     </div>
                     <h3 class="requirement-title">Delivery Driver</h3>
                     <p class="requirement-description"><strong>Weston-super-Mare</strong><br>£175&ndash;£195 per day + VAT + fuel allowance</p>
+                    <a href="#apply" onclick="applyForRole('Delivery Driver - Weston-super-Mare')" class="btn btn-primary btn-small card-apply-btn">Apply Now &rarr;</a>
                 </div>
                 <div class="requirement-card">
                     <div class="requirement-icon">
@@ -180,10 +187,11 @@
                     </div>
                     <h3 class="requirement-title">Delivery Driver</h3>
                     <p class="requirement-description"><strong>Worcester</strong><br>£165&ndash;£185 per day + VAT + fuel allowance</p>
+                    <a href="#apply" onclick="applyForRole('Delivery Driver - Worcester')" class="btn btn-primary btn-small card-apply-btn">Apply Now &rarr;</a>
                 </div>
             </div>
         </div>
-    </section>
+    
 
     <!-- HR Separator -->
     <div class="container"><hr class="hr-reveal hr-reveal--light"></div>
@@ -430,5 +438,13 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        function applyForRole(roleName) {
+            const addr = document.getElementById('address');
+            const addInfo = document.getElementById('additional-info');
+            if (addr) addr.value = 'Role: ' + roleName;
+            if (addInfo) addInfo.value = 'Applying for ' + roleName + '.';
+        }
+    </script>
 </body>
 </html>
