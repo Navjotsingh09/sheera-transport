@@ -1861,6 +1861,9 @@ a.footer-contact-item:hover svg { opacity: 1; }
 .requirement-card:hover .requirement-description { color: rgba(255,255,255,0.7); }
 .requirement-card:hover .requirement-icon { color: var(--white); }
 .requirement-card:hover .requirement-icon svg { stroke: var(--white); }
+.requirement-card:hover .cta-link--red { color: var(--white); }
+.requirement-card:hover .cta-link--red::before { background: var(--white); }
+.requirement-card:hover .cta-link--red::after { background: rgba(255,255,255,0.4); }
 .requirement-icon {
     width: 48px; height: 48px; margin: 0 auto 1rem;
     display: flex; align-items: center; justify-content: center;
