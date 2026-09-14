@@ -271,25 +271,19 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
 
         const data = {
-            _subject: 'New Business Enquiry — Seehra Transport Website',
-            _cc: 'navjot.singh@5rv.digital',
-            _template: 'table',
-            'Name': document.getElementById('quote-name').value.trim(),
-            'Email': document.getElementById('quote-email').value.trim(),
-            'Phone': document.getElementById('quote-phone').value.trim(),
-            'Company': (document.getElementById('quote-company').value || '').trim() || 'Not provided',
-            'Service Interest': document.getElementById('quote-service').value,
-            'Message': document.getElementById('quote-message').value.trim()
+            name: document.getElementById('quote-name').value.trim(),
+            email: document.getElementById('quote-email').value.trim(),
+            phone: document.getElementById('quote-phone').value.trim(),
+            message: 'Company: ' + ((document.getElementById('quote-company').value || '').trim() || 'Not provided') +
+                '\nService Interest: ' + document.getElementById('quote-service').value +
+                '\n\n' + document.getElementById('quote-message').value.trim()
         };
 
         try {
-            const response = await fetch('https://formsubmit.co/ajax/info@seehratransport.com', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            const { submitBusinessEnquiryNotification } = await import('./supabase-forms.js');
+            const response = await submitBusinessEnquiryNotification(data);
 
-            if (response.ok) {
+            if (response.success) {
                 quoteForm.style.display = 'none';
                 quoteResult.style.display = 'block';
                 quoteResult.scrollIntoView({ behavior: 'smooth', block: 'center' });

@@ -258,9 +258,7 @@
             </form>
 
             <p style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--gray-mid);">
-                📝 After Firebase setup:<br>
-                admin@seehratransport.com<br>
-                Admin@12345
+                Use your authorised Seehra Transport staff account.
             </p>
         </div>
     </div>
@@ -358,7 +356,21 @@
             });
         });
 
-        // Admin Auth Simulation / Supabase Auth Handler
+        const ADMIN_EMAILS = new Set(['info@seehratransport.com']);
+
+        async function showDashboardForAdmin(user) {
+            const email = user?.email?.toLowerCase();
+            if (!email || !ADMIN_EMAILS.has(email)) {
+                await supabase.auth.signOut();
+                throw new Error('This account is not authorised to access form submissions.');
+            }
+            userEmail.textContent = email;
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'block';
+            loadData(0);
+        }
+
+        // Supabase Auth Handler
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
@@ -366,23 +378,9 @@
             errorDiv.style.display = 'none';
 
             try {
-                // Check admin credentials
-                if ((email === 'admin@seehratransport.com' || email.includes('@seehratransport.com')) && password === 'Admin@12345') {
-                    sessionStorage.setItem('admin_user', email);
-                    userEmail.textContent = email;
-                    loginScreen.style.display = 'none';
-                    dashboard.style.display = 'block';
-                    loadData(0);
-                } else {
-                    // Try Supabase auth if configured
-                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                    if (error) throw error;
-                    sessionStorage.setItem('admin_user', data.user.email);
-                    userEmail.textContent = data.user.email;
-                    loginScreen.style.display = 'none';
-                    dashboard.style.display = 'block';
-                    loadData(0);
-                }
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                await showDashboardForAdmin(data.user);
             } catch (error) {
                 errorDiv.textContent = 'Login failed: ' + (error.message || 'Invalid credentials');
                 errorDiv.style.display = 'block';
@@ -390,19 +388,23 @@
         });
 
         // Logout
-        logoutBtn.addEventListener('click', () => {
-            sessionStorage.removeItem('admin_user');
+        logoutBtn.addEventListener('click', async () => {
+            await supabase.auth.signOut();
             loginScreen.style.display = 'flex';
             dashboard.style.display = 'none';
         });
 
         // Auth state check
-        const activeUser = sessionStorage.getItem('admin_user');
+        const { data: { user: activeUser } } = await supabase.auth.getUser();
         if (activeUser) {
-            userEmail.textContent = activeUser;
-            loginScreen.style.display = 'none';
-            dashboard.style.display = 'block';
-            loadData(0);
+            try {
+                await showDashboardForAdmin(activeUser);
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+                loginScreen.style.display = 'flex';
+                dashboard.style.display = 'none';
+            }
         } else {
             loginScreen.style.display = 'flex';
             dashboard.style.display = 'none';
@@ -469,7 +471,7 @@
 
                 data.forEach(d => {
                     const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString('en-GB') : 'N/A';
-                    const cvLink = d.cv_url ? `<a href="${d.cv_url}" target="_blank" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">📄 View CV</a>` : 'Not uploaded';
+                    const cvLink = d.cv_url ? '<a href="#" class="cv-link" data-cv-path="' + d.cv_url + '" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">View CV</a>' : 'Not uploaded';
                     tbody.innerHTML += `
                         <tr>
                             <td>${d.full_name || 'N/A'}</td>
@@ -481,6 +483,25 @@
                             <td><span class="status status-new">${d.status || 'pending'}</span></td>
                         </tr>
                     `;
+                });
+                tbody.querySelectorAll('.cv-link').forEach(link => {
+                    link.addEventListener('click', async event => {
+                        event.preventDefault();
+                        const cvTab = window.open('', '_blank');
+                        if (!cvTab) {
+                            alert('Please allow pop-ups to open the CV.');
+                            return;
+                        }
+                        const { data: signedUrl, error } = await supabase.storage
+                            .from('cv-uploads')
+                            .createSignedUrl(link.dataset.cvPath, 60);
+                        if (error) {
+                            cvTab.close();
+                            alert('The CV could not be opened. Please try again.');
+                            return;
+                        }
+                        cvTab.location.href = signedUrl.signedUrl;
+                    });
                 });
             } catch (error) {
                 console.error('Error loading recruitment:', error);

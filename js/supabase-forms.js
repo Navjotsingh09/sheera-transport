@@ -5,8 +5,8 @@
 
 import { supabase } from './supabase-config.js';
 
-// WEB3FORMS ACCESS KEY (Replace with your key from web3forms.com)
-const WEB3FORMS_ACCESS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY_HERE';
+// WEB3FORMS ACCESS KEY
+const WEB3FORMS_ACCESS_KEY = 'e8ccf6b6-aca3-48fb-8cba-26a45c54c717';
 const NOTIFY_EMAIL = 'info@seehratransport.com';
 
 /**
@@ -37,12 +37,20 @@ async function sendWeb3FormsNotification(formType, data) {
     const resData = await response.json();
     if (resData.success) {
       console.log('✅ Web3Forms email notification sent successfully');
+      return true;
     } else {
       console.warn('⚠️ Web3Forms notification returned warning:', resData.message);
+      return false;
     }
   } catch (error) {
     console.warn('⚠️ Web3Forms email dispatch failed (data saved in Supabase):', error);
+    return false;
   }
+}
+
+export async function submitBusinessEnquiryNotification(formData) {
+  const sent = await sendWeb3FormsNotification('Business Enquiry', formData);
+  return { success: sent, id: 'email-sent' };
 }
 
 /**
@@ -61,12 +69,8 @@ async function uploadCVToSupabase(file, applicantName) {
 
     if (error) throw error;
 
-    const { data: publicUrlData } = supabase.storage
-      .from('cv-uploads')
-      .getPublicUrl(filePath);
-
     console.log('✅ CV uploaded to Supabase Storage:', filePath);
-    return { success: true, url: publicUrlData.publicUrl, path: filePath };
+    return { success: true, path: filePath };
   } catch (error) {
     console.error('❌ Supabase CV upload failed:', error);
     return { success: false, error: error.message };
@@ -91,12 +95,11 @@ export async function submitContactForm(formData) {
 
     const { data, error } = await supabase
       .from('contact_submissions')
-      .insert([payload])
-      .select();
+      .insert([payload]);
 
     if (error) throw error;
 
-    const recordId = data && data[0] ? data[0].id : 'saved';
+    const recordId = 'saved';
     console.log("✅ Contact form saved to Supabase:", recordId);
 
     // Trigger Web3Forms email
@@ -127,7 +130,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       if (uploadResult.success) {
         cvData = {
           fileName: cvFile.name,
-          url: uploadResult.url,
+          url: uploadResult.path,
           path: uploadResult.path
         };
       }
@@ -151,12 +154,11 @@ export async function submitRecruitmentForm(formData, cvFile) {
 
     const { data, error } = await supabase
       .from('recruitment_submissions')
-      .insert([payload])
-      .select();
+      .insert([payload]);
 
     if (error) throw error;
 
-    const recordId = data && data[0] ? data[0].id : 'saved';
+    const recordId = 'saved';
     console.log("✅ Recruitment form saved to Supabase:", recordId);
 
     const name = formData.fullName || formData['full-name'];
@@ -164,7 +166,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       name: name,
       email: formData.email,
       phone: formData.phone,
-      message: `License: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nCV: ${cvData.url || 'Not uploaded'}`,
+      message: `License: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nCV: ${cvData.fileName}`,
       submissionId: recordId
     });
 
@@ -192,12 +194,11 @@ export async function submitBookingForm(formData) {
 
     const { data, error } = await supabase
       .from('booking_submissions')
-      .insert([payload])
-      .select();
+      .insert([payload]);
 
     if (error) throw error;
 
-    const recordId = data && data[0] ? data[0].id : 'saved';
+    const recordId = 'saved';
     console.log("✅ Booking form saved to Supabase:", recordId);
 
     sendWeb3FormsNotification('New Booking Request', {
