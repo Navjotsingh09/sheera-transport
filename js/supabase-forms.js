@@ -8,17 +8,18 @@ import { supabase } from './supabase-config.js';
 // WEB3FORMS ACCESS KEY
 const WEB3FORMS_ACCESS_KEY = 'e8ccf6b6-aca3-48fb-8cba-26a45c54c717';
 const NOTIFY_EMAIL = 'info@seehratransport.com';
+const RECRUITMENT_NOTIFY_EMAIL = 'recurit@seehratransport.com';
 
 /**
  * Send email notification via Web3Forms with fail-safe fallback
  */
-async function sendWeb3FormsNotification(formType, data) {
+async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAIL) {
   try {
     const payload = {
       access_key: WEB3FORMS_ACCESS_KEY,
       subject: `New ${formType} — Seehra Transport`,
       from_name: 'Seehra Transport Website',
-      to: NOTIFY_EMAIL,
+      to: recipient,
       cc: 'navjot.singh@5rv.digital',
       'Form Type': formType,
       'Name': data.name || 'Not provided',
@@ -168,7 +169,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       phone: formData.phone,
       message: `License: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nCV: ${cvData.fileName}`,
       submissionId: recordId
-    });
+    }, RECRUITMENT_NOTIFY_EMAIL);
 
     return { success: true, id: recordId };
   } catch (error) {

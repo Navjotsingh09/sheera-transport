@@ -13,14 +13,15 @@ const storage = getStorage();
 
 // ===== FormSubmit.co — zero-config email forwarding =====
 const NOTIFY_EMAIL = 'info@seehratransport.com';
+const RECRUITMENT_NOTIFY_EMAIL = 'recurit@seehratransport.com';
 const FORMSUBMIT_URL = `https://formsubmit.co/ajax/${NOTIFY_EMAIL}`;
 
 /**
  * Send email notification via FormSubmit.co (no signup needed)
  */
-async function sendEmailNotification(formType, data) {
+async function sendEmailNotification(formType, data, recipient = NOTIFY_EMAIL) {
   try {
-    await fetch(FORMSUBMIT_URL, {
+    await fetch(`https://formsubmit.co/ajax/${recipient}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
@@ -143,7 +144,7 @@ async function submitRecruitmentForm(formData, cvFile) {
       phone: formData.phone,
       message: `License: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nAvailability: ${formData.availability}\nCV: ${cvData.url || 'Not uploaded'}`,
       submissionId: docRef.id
-    });
+    }, RECRUITMENT_NOTIFY_EMAIL);
 
     return { success: true, id: docRef.id };
   } catch (error) {
