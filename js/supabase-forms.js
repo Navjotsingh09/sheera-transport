@@ -55,6 +55,31 @@ export async function submitBusinessEnquiryNotification(formData) {
 }
 
 /**
+ * Send an applicant-facing notification (thank-you / approved / declined) via the
+ * /api/send-notification serverless function. Fails silently so it never blocks a submission.
+ */
+async function sendApplicantNotification(type, to, name) {
+  if (!to) return false;
+  try {
+    const response = await fetch('/api/send-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, to, name })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      console.warn('⚠️ Applicant notification failed:', result);
+      return false;
+    }
+    console.log('✅ Applicant notification sent:', type);
+    return true;
+  } catch (error) {
+    console.warn('⚠️ Applicant notification dispatch failed:', error);
+    return false;
+  }
+}
+
+/**
  * Upload CV file to Supabase Storage ('cv-uploads' bucket)
  */
 async function uploadCVToSupabase(file, applicantName) {
@@ -103,7 +128,7 @@ export async function submitContactForm(formData) {
     const recordId = 'saved';
     console.log("✅ Contact form saved to Supabase:", recordId);
 
-    // Trigger Web3Forms email
+    // Trigger Web3Forms email (to staff)
     sendWeb3FormsNotification('Contact Form', {
       name: formData.name,
       email: formData.email,
@@ -111,6 +136,9 @@ export async function submitContactForm(formData) {
       message: `Service: ${formData.service}\nCompany: ${formData.company || 'N/A'}\n\n${formData.message}`,
       submissionId: recordId
     });
+
+    // Thank-you email to the person who submitted the enquiry
+    sendApplicantNotification('contact-thankyou', formData.email, formData.name);
 
     return { success: true, id: recordId };
   } catch (error) {
@@ -170,6 +198,9 @@ export async function submitRecruitmentForm(formData, cvFile) {
       message: `License: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nCV: ${cvData.fileName}`,
       submissionId: recordId
     }, RECRUITMENT_NOTIFY_EMAIL);
+
+    // Thank-you email to the applicant
+    sendApplicantNotification('recruitment-thankyou', formData.email, name);
 
     return { success: true, id: recordId };
   } catch (error) {

@@ -203,6 +203,24 @@
         }
 
         .status-new { background: rgba(255, 21, 0, 0.1); color: var(--red); }
+        .status-approved { background: rgba(29, 111, 53, 0.12); color: #1D6F35; }
+        .status-declined { background: rgba(102, 102, 102, 0.15); color: var(--gray-dark); }
+
+        .action-btn {
+            border: none;
+            border-radius: 4px;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-right: 0.4rem;
+            transition: opacity 0.2s;
+        }
+        .action-btn:hover { opacity: 0.85; }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .approve-btn { background: #1D6F35; color: var(--white); }
+        .decline-btn { background: var(--gray-mid); color: var(--white); }
 
         .no-data {
             text-align: center;
@@ -307,6 +325,7 @@
                             <th>Experience</th>
                             <th>Date</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="recruitmentData"></tbody>
@@ -472,15 +491,22 @@
                 data.forEach(d => {
                     const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString('en-GB') : 'N/A';
                     const cvLink = d.cv_url ? '<a href="#" class="cv-link" data-cv-path="' + d.cv_url + '" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">View CV</a>' : 'Not uploaded';
+                    const status = d.status || 'pending';
+                    const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : 'status-new';
+                    const decided = status === 'approved' || status === 'declined';
                     tbody.innerHTML += `
-                        <tr>
+                        <tr data-id="${d.id}" data-email="${d.email || ''}" data-name="${d.full_name || ''}">
                             <td>${d.full_name || 'N/A'}</td>
                             <td>${d.email || 'N/A'}</td>
                             <td>${d.license_type || 'N/A'}</td>
                             <td>${d.experience || 'N/A'}</td>
                             <td>${cvLink}</td>
                             <td>${dateStr}</td>
-                            <td><span class="status status-new">${d.status || 'pending'}</span></td>
+                            <td><span class="status ${statusClass}">${status}</span></td>
+                            <td>
+                                <button class="action-btn approve-btn" data-action="approved" ${decided ? 'disabled' : ''}>Approve</button>
+                                <button class="action-btn decline-btn" data-action="declined" ${decided ? 'disabled' : ''}>Decline</button>
+                            </td>
                         </tr>
                     `;
                 });
@@ -501,6 +527,46 @@
                             return;
                         }
                         cvTab.location.href = signedUrl.signedUrl;
+                    });
+                });
+                tbody.querySelectorAll('.action-btn').forEach(btn => {
+                    btn.addEventListener('click', async event => {
+                        const row = event.target.closest('tr');
+                        const id = row.dataset.id;
+                        const email = row.dataset.email;
+                        const name = row.dataset.name;
+                        const decision = event.target.dataset.action; // 'approved' | 'declined'
+
+                        if (!confirm(`Mark this application as ${decision} and notify the applicant?`)) return;
+
+                        row.querySelectorAll('.action-btn').forEach(b => b.disabled = true);
+
+                        const { error: updateError } = await supabase
+                            .from('recruitment_submissions')
+                            .update({ status: decision })
+                            .eq('id', id);
+
+                        if (updateError) {
+                            alert('Could not update the application status. Please try again.');
+                            row.querySelectorAll('.action-btn').forEach(b => b.disabled = false);
+                            return;
+                        }
+
+                        try {
+                            await fetch('/api/send-notification', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    type: decision === 'approved' ? 'recruitment-approved' : 'recruitment-declined',
+                                    to: email,
+                                    name: name
+                                })
+                            });
+                        } catch (notifyError) {
+                            console.warn('Applicant notification failed to send:', notifyError);
+                        }
+
+                        loadRecruitment();
                     });
                 });
             } catch (error) {
