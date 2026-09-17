@@ -41,11 +41,5 @@
     }
   ],
   "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/coming-soon.html"
-    }
-  ]
+  "trailingSlash": false
 }
