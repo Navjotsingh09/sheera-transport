@@ -176,7 +176,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       availability: formData.availability || "",
       cv_url: cvData.url,
       cv_file_name: cvData.fileName,
-      additional_info: formData.additionalInfo || formData['additional-info'] || "",
+      additional_info: `Role: ${formData.role || "Not selected"}\n${formData.additionalInfo || formData['additional-info'] || ""}`.trim(),
       status: "pending_review",
       created_at: new Date().toISOString()
     };
@@ -195,7 +195,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       name: name,
       email: formData.email,
       phone: formData.phone,
-      message: `License: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nCV: ${cvData.fileName}`,
+      message: `Role: ${formData.role || "Not selected"}\nLicense: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nCV: ${cvData.fileName}`,
       submissionId: recordId
     }, RECRUITMENT_NOTIFY_EMAIL);
 

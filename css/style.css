@@ -1878,6 +1878,16 @@ a.footer-contact-item:hover svg { opacity: 1; }
     color: var(--gray-mid); line-height: 1.6; font-weight: 300;
     font-size: 0.9375rem; transition: color var(--transition); margin-bottom: 0;
 }
+.vacancy-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; }
+.job-info-dialog { position: fixed; inset: 0; width: min(720px, calc(100% - 2rem)); max-height: min(760px, calc(100dvh - 2rem)); margin: auto; border: 0; border-radius: var(--radius-sm); padding: 0; color: var(--dark-blue); }
+.job-info-dialog::backdrop { background: rgba(var(--dark-blue-rgb), 0.72); }
+.job-info-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--gray-border); }
+.job-info-dialog-header h2 { margin: 0; font-size: 1.25rem; text-transform: uppercase; }
+.job-info-close { border: 0; background: transparent; color: var(--dark-blue); font-size: 2rem; line-height: 1; cursor: pointer; }
+#job-info-content { overflow-y: auto; max-height: calc(min(760px, 100dvh - 2rem) - 82px); padding: 1.5rem; }
+#job-info-content h3 { margin: 1.5rem 0 0.5rem; font-size: 1rem; text-transform: uppercase; }
+#job-info-content h3:first-child { margin-top: 1rem; }
+#job-info-content ul { margin: 0; padding-left: 1.25rem; color: var(--gray-mid); line-height: 1.65; }
 .file-upload-group { margin-bottom: 1.25rem; }
 .file-upload-wrapper { position: relative; display: inline-block; width: 100%; }
 .file-input { position: absolute; opacity: 0; width: 0; height: 0; }
