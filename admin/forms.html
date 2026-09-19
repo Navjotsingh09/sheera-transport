@@ -334,6 +334,9 @@
                             <th>Email</th>
                             <th>License Type</th>
                             <th>Experience</th>
+                            <th>CV</th>
+                            <th>Source URL</th>
+                            <th>Campaign</th>
                             <th>Date</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -446,6 +449,22 @@
             else if (tabIndex === 2) loadBooking();
         }
 
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>'"]/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            })[char]);
+        }
+
+        function trackingValue(details, label) {
+            const match = String(details || '').match(new RegExp(label + ':\\s*([^\\n]+)'));
+            if (!match || match[1] === 'Not provided') return '';
+            return match[1];
+        }
+
         async function loadContact() {
             try {
                 const { data, error } = await supabase
@@ -505,6 +524,11 @@
                     const status = d.status || 'pending';
                     const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : 'status-new';
                     const decided = status === 'approved' || status === 'declined';
+                    const sourceUrl = trackingValue(d.additional_info, 'Source URL');
+                    const utmSource = trackingValue(d.additional_info, 'UTM Source');
+                    const utmMedium = trackingValue(d.additional_info, 'UTM Medium');
+                    const utmCampaign = trackingValue(d.additional_info, 'UTM Campaign');
+                    const campaignParts = [utmSource, utmMedium, utmCampaign].filter(Boolean).map(escapeHtml);
                     tbody.innerHTML += `
                         <tr data-id="${d.id}" data-email="${d.email || ''}" data-name="${d.full_name || ''}">
                             <td>${d.full_name || 'N/A'}</td>
@@ -512,6 +536,8 @@
                             <td>${d.license_type || 'N/A'}</td>
                             <td>${d.experience || 'N/A'}</td>
                             <td>${cvLink}</td>
+                            <td>${sourceUrl ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">Source</a>` : 'N/A'}</td>
+                            <td>${campaignParts.length ? campaignParts.join(' / ') : 'N/A'}</td>
                             <td>${dateStr}</td>
                             <td><span class="status ${statusClass}">${status}</span></td>
                             <td>

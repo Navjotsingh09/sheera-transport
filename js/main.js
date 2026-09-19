@@ -164,11 +164,27 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* ===== FORM VALIDATION WITH FIREBASE ===== */
+function populateTrackingFields() {
+    const params = new URLSearchParams(window.location.search);
+    const trackingValues = {
+        source_url: window.location.href,
+        utm_source: params.get('utm_source') || '',
+        utm_medium: params.get('utm_medium') || '',
+        utm_campaign: params.get('utm_campaign') || '',
+        utm_content: params.get('utm_content') || ''
+    };
+
+    document.querySelectorAll('[data-tracking-field]').forEach(input => {
+        input.value = trackingValues[input.dataset.trackingField] || '';
+    });
+}
+
 function validateForm(formId) {
     const form = document.getElementById(formId);
     if (!form) return;
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
+        populateTrackingFields();
         const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
         let valid = true;
         form.querySelectorAll('.error-message').forEach(x => x.remove());
@@ -194,7 +210,12 @@ function validateForm(formId) {
             try {
                 // Collect form data
                 let formData = {};
-                inputs.forEach(input => {
+                form.querySelectorAll('input[name], textarea[name], select[name]').forEach(input => {
+                    if (input.type === 'file') return;
+                    if (input.type === 'checkbox') {
+                        formData[input.name] = input.checked ? input.value : '';
+                        return;
+                    }
                     formData[input.name] = input.value;
                 });
 
@@ -216,6 +237,7 @@ function validateForm(formId) {
                     s.innerHTML = '<p style="color:var(--success,#1D6F35);font-weight:700;text-align:center;padding:1rem;background:rgba(29,111,53,0.08);border-radius:8px;margin-top:1rem;text-transform:uppercase;font-size:0.875rem;letter-spacing:0.02em;">✅ Thank you! Your submission (ID: ' + result.id.substring(0, 8) + '...) has been saved.</p>';
                     form.appendChild(s);
                     form.reset();
+                    populateTrackingFields();
                     setTimeout(() => s.remove(), 10000);
                 } else {
                     throw new Error('Submission failed');
@@ -234,6 +256,7 @@ function validateForm(formId) {
     });
 }
 document.addEventListener('DOMContentLoaded', () => {
+    populateTrackingFields();
     validateForm('contact-form');
     validateForm('recruitment-form');
 });

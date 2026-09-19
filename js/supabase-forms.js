@@ -79,6 +79,18 @@ async function sendApplicantNotification(type, to, name) {
   }
 }
 
+function formatRecruitmentTracking(formData) {
+  return [
+    '',
+    'Tracking Metadata:',
+    `Source URL: ${formData.source_url || 'Not provided'}`,
+    `UTM Source: ${formData.utm_source || 'Not provided'}`,
+    `UTM Medium: ${formData.utm_medium || 'Not provided'}`,
+    `UTM Campaign: ${formData.utm_campaign || 'Not provided'}`,
+    `UTM Content: ${formData.utm_content || 'Not provided'}`
+  ].join('\n');
+}
+
 /**
  * Upload CV file to Supabase Storage ('cv-uploads' bucket)
  */
@@ -176,7 +188,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       availability: formData.availability || "",
       cv_url: cvData.url,
       cv_file_name: cvData.fileName,
-      additional_info: `Role: ${formData.role || "Not selected"}\n${formData.additionalInfo || formData['additional-info'] || ""}`.trim(),
+      additional_info: `Role: ${formData.role || "Not selected"}\n${formData.additionalInfo || formData['additional-info'] || ""}${formatRecruitmentTracking(formData)}`.trim(),
       status: "pending_review",
       created_at: new Date().toISOString()
     };
@@ -195,7 +207,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       name: name,
       email: formData.email,
       phone: formData.phone,
-      message: `Role: ${formData.role || "Not selected"}\nLicense: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nCV: ${cvData.fileName}`,
+      message: `Role: ${formData.role || "Not selected"}\nLicense: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nCV: ${cvData.fileName}${formatRecruitmentTracking(formData)}`,
       submissionId: recordId
     }, RECRUITMENT_NOTIFY_EMAIL);
 
