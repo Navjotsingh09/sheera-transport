@@ -164,6 +164,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* ===== FORM VALIDATION WITH FIREBASE ===== */
+const SUPABASE_FORMS_MODULE = './supabase-forms.js?v=20260919-email-fallback';
+
 function populateTrackingFields() {
     const params = new URLSearchParams(window.location.search);
     const trackingValues = {
@@ -256,10 +258,10 @@ function validateForm(formId) {
                 // Submit to Supabase + Web3Forms
                 let result;
                 if (formId === 'contact-form') {
-                    const { submitContactForm } = await import('./supabase-forms.js');
+                    const { submitContactForm } = await import(SUPABASE_FORMS_MODULE);
                     result = await submitContactForm(formData);
                 } else if (formId === 'recruitment-form') {
-                    const { submitRecruitmentForm } = await import('./supabase-forms.js');
+                    const { submitRecruitmentForm } = await import(SUPABASE_FORMS_MODULE);
                     const cvInput = document.getElementById('cv-upload');
                     const cvFile = cvInput && cvInput.files.length > 0 ? cvInput.files[0] : null;
                     result = await submitRecruitmentForm(formData, cvFile);
@@ -333,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const { submitBusinessEnquiryNotification } = await import('./supabase-forms.js');
+            const { submitBusinessEnquiryNotification } = await import(SUPABASE_FORMS_MODULE);
             const response = await submitBusinessEnquiryNotification(data);
 
             if (response.success) {

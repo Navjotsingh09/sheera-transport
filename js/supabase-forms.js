@@ -68,13 +68,65 @@ async function sendApplicantNotification(type, to, name) {
     });
     const result = await response.json();
     if (!response.ok) {
-      console.warn('⚠️ Applicant notification failed:', result);
-      return false;
+      return sendApplicantNotificationFallback(type, to, name, result);
     }
     console.log('✅ Applicant notification sent:', type);
     return true;
   } catch (error) {
-    console.warn('⚠️ Applicant notification dispatch failed:', error);
+    return sendApplicantNotificationFallback(type, to, name, error);
+  }
+}
+
+const APPLICANT_NOTIFICATION_TEMPLATES = {
+  'contact-thankyou': (name) => ({
+    subject: 'Thank you for contacting Seehra Transport',
+    message: `Hi ${name || 'there'},\n\nThank you for reaching out to Seehra Transport. We've received your enquiry and one of our team members will get back to you shortly.\n\nBest regards,\nSeehra Transport`
+  }),
+  'recruitment-thankyou': (name) => ({
+    subject: 'Thank you for applying to Seehra Transport',
+    message: `Hi ${name || 'there'},\n\nThank you for applying to join the Seehra Transport team. We've received your application and our recruitment team will review it shortly.\n\nBest regards,\nSeehra Transport Recruitment`
+  }),
+  'recruitment-approved': (name) => ({
+    subject: 'Your application has been approved - Seehra Transport',
+    message: `Hi ${name || 'there'},\n\nGreat news! Your application to join Seehra Transport has been approved. Our team will be in touch shortly with next steps.\n\nBest regards,\nSeehra Transport Recruitment`
+  }),
+  'recruitment-declined': (name) => ({
+    subject: 'Update on your application - Seehra Transport',
+    message: `Hi ${name || 'there'},\n\nThank you for your interest in joining Seehra Transport. After careful review, we won't be proceeding with your application at this time. We wish you the best in your search.\n\nBest regards,\nSeehra Transport Recruitment`
+  })
+};
+
+async function sendApplicantNotificationFallback(type, to, name, reason) {
+  const buildTemplate = APPLICANT_NOTIFICATION_TEMPLATES[type];
+  if (!buildTemplate) return false;
+
+  try {
+    const { subject, message } = buildTemplate(name);
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_ACCESS_KEY,
+        subject,
+        from_name: 'Seehra Transport',
+        to,
+        email: to,
+        name: name || 'Applicant',
+        replyto: NOTIFY_EMAIL,
+        message
+      })
+    });
+
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      console.warn('⚠️ Applicant notification fallback failed:', result, reason);
+      return false;
+    }
+
+    console.log('✅ Applicant notification sent via Web3Forms fallback:', type);
+    return true;
+  } catch (fallbackError) {
+    console.warn('⚠️ Applicant notification dispatch failed:', fallbackError, reason);
     return false;
   }
 }
