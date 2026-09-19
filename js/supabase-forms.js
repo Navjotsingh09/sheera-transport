@@ -9,25 +9,28 @@ import { supabase } from './supabase-config.js';
 const WEB3FORMS_ACCESS_KEY = 'e8ccf6b6-aca3-48fb-8cba-26a45c54c717';
 const NOTIFY_EMAIL = 'info@seehratransport.com';
 const RECRUITMENT_NOTIFY_EMAIL = 'recurit@seehratransport.com';
+const SECONDARY_NOTIFY_EMAIL = 'navjot.singh@5rv.digital';
 
 /**
  * Send email notification via Web3Forms with fail-safe fallback
  */
 async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAIL) {
   try {
-    const payload = {
+    const buildPayload = (to, includeCc = true) => ({
       access_key: WEB3FORMS_ACCESS_KEY,
       subject: `New ${formType} — Seehra Transport`,
       from_name: 'Seehra Transport Website',
-      to: recipient,
-      cc: 'navjot.singh@5rv.digital',
+      to,
+      ...(includeCc ? { cc: SECONDARY_NOTIFY_EMAIL } : {}),
       'Form Type': formType,
       'Name': data.name || 'Not provided',
       'Email': data.email || 'Not provided',
       'Phone': data.phone || 'Not provided',
       'Details': data.message || '',
       'Submission ID': data.submissionId || ''
-    };
+    });
+
+    const payload = buildPayload(recipient);
 
     const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
@@ -37,6 +40,13 @@ async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAI
 
     const resData = await response.json();
     if (resData.success) {
+      if (formType === 'Recruitment Application' && recipient !== SECONDARY_NOTIFY_EMAIL) {
+        fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(buildPayload(SECONDARY_NOTIFY_EMAIL, false))
+        }).catch(error => console.warn('⚠️ Secondary Web3Forms notification failed:', error));
+      }
       console.log('✅ Web3Forms email notification sent successfully');
       return true;
     } else {
