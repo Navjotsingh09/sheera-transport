@@ -179,6 +179,40 @@ function populateTrackingFields() {
     });
 }
 
+function showSubmissionModal(resultId) {
+    document.querySelector('.submission-modal')?.remove();
+
+    const modal = document.createElement('div');
+    modal.className = 'submission-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'submission-modal-title');
+    modal.innerHTML = `
+        <div class="submission-modal-card">
+            <button type="button" class="submission-modal-close" aria-label="Close submission confirmation">&times;</button>
+            <p class="submission-modal-kicker">Application Received</p>
+            <h2 id="submission-modal-title">Thank you for your submission.</h2>
+            <p>Your details have been saved successfully. Our team will review your application and contact you shortly.</p>
+            <p class="submission-modal-id">Reference: ${resultId.substring(0, 8)}...</p>
+            <button type="button" class="btn btn-primary submission-modal-button">Close</button>
+        </div>
+    `;
+
+    const closeModal = () => {
+        modal.remove();
+        document.body.classList.remove('submission-modal-open');
+    };
+
+    modal.querySelectorAll('button').forEach(button => button.addEventListener('click', closeModal));
+    modal.addEventListener('click', event => {
+        if (event.target === modal) closeModal();
+    });
+
+    document.body.appendChild(modal);
+    document.body.classList.add('submission-modal-open');
+    modal.querySelector('.submission-modal-button').focus();
+}
+
 function validateForm(formId) {
     const form = document.getElementById(formId);
     if (!form) return;
@@ -232,13 +266,9 @@ function validateForm(formId) {
                 }
 
                 if (result && result.success) {
-                    const s = document.createElement('div');
-                    s.className = 'success-message';
-                    s.innerHTML = '<p style="color:var(--success,#1D6F35);font-weight:700;text-align:center;padding:1rem;background:rgba(29,111,53,0.08);border-radius:8px;margin-top:1rem;text-transform:uppercase;font-size:0.875rem;letter-spacing:0.02em;">✅ Thank you! Your submission (ID: ' + result.id.substring(0, 8) + '...) has been saved.</p>';
-                    form.appendChild(s);
                     form.reset();
                     populateTrackingFields();
-                    setTimeout(() => s.remove(), 10000);
+                    showSubmissionModal(result.id);
                 } else {
                     throw new Error('Submission failed');
                 }
