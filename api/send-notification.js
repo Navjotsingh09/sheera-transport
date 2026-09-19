@@ -28,6 +28,44 @@ const TEMPLATES = {
   })
 };
 
+const WEB3FORMS_ACCESS_KEY = 'e8ccf6b6-aca3-48fb-8cba-26a45c54c717';
+const NOTIFY_EMAIL = 'info@seehratransport.com';
+
+function htmlToText(html) {
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+async function sendViaWeb3Forms({ to, name, subject, html }) {
+  const response = await fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      access_key: WEB3FORMS_ACCESS_KEY,
+      subject,
+      from_name: 'Seehra Transport',
+      to,
+      email: to,
+      name: name || 'Applicant',
+      replyto: NOTIFY_EMAIL,
+      message: htmlToText(html)
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || !data.success) {
+    console.error('Web3Forms error:', data);
+    return { ok: false, status: response.status || 502, data };
+  }
+
+  return { ok: true, data };
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -47,12 +85,21 @@ export default async function handler(req, res) {
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Seehra Transport <onboarding@resend.dev>';
 
-  if (!RESEND_API_KEY) {
-    console.error('RESEND_API_KEY is not configured');
-    return res.status(500).json({ error: 'Email service not configured' });
-  }
-
   const { subject, html } = buildTemplate(name);
+
+  if (!RESEND_API_KEY) {
+    try {
+      const fallback = await sendViaWeb3Forms({ to, name, subject, html });
+      if (!fallback.ok) {
+        return res.status(502).json({ error: 'Failed to send email', details: fallback.data });
+      }
+
+      return res.status(200).json({ success: true, provider: 'web3forms', id: fallback.data.message || 'email-sent' });
+    } catch (error) {
+      console.error('Web3Forms fallback failed:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
 
   try {
     const response = await fetch('https://api.resend.com/emails', {
@@ -71,7 +118,7 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Failed to send email', details: data });
     }
 
-    return res.status(200).json({ success: true, id: data.id });
+    return res.status(200).json({ success: true, provider: 'resend', id: data.id });
   } catch (error) {
     console.error('Notification send failed:', error);
     return res.status(500).json({ error: error.message });
