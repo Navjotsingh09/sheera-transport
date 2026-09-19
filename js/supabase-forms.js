@@ -70,6 +70,9 @@ async function sendApplicantNotification(type, to, name) {
     if (!response.ok) {
       return sendApplicantNotificationFallback(type, to, name, result);
     }
+    if (!result.success || result.fallbackRequired) {
+      return sendApplicantNotificationFallback(type, to, name, result);
+    }
     console.log('✅ Applicant notification sent:', type);
     return true;
   } catch (error) {

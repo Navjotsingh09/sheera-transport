@@ -51,7 +51,7 @@ export default async function handler(req, res) {
 
   if (!RESEND_API_KEY) {
     console.error('RESEND_API_KEY is not configured');
-    return res.status(503).json({ error: 'Email service not configured', fallbackRequired: true });
+    return res.status(200).json({ success: false, error: 'Email service not configured', fallbackRequired: true });
   }
 
   try {
