@@ -26,6 +26,7 @@ async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAI
       'Name': data.name || 'Not provided',
       'Email': data.email || 'Not provided',
       'Phone': data.phone || 'Not provided',
+      ...(data.fields || {}),
       'Details': data.message || '',
       'Submission ID': data.submissionId || ''
     });
@@ -274,21 +275,21 @@ export async function submitRecruitmentForm(formData, cvFile) {
     console.log("✅ Recruitment form saved to Supabase:", recordId);
 
     const name = formData.fullName || formData['full-name'];
-    const recruitmentMessage = [
-      `Role: ${formData.role || "Not selected"}`,
-      `Address: ${formData.address || "Not provided"}`,
-      `License Type: ${formData.licenseType || formData['license-type'] || "Not provided"}`,
-      `License Years: ${formData.licenseYears || formData['license-years'] || "Not provided"}`,
-      `Experience: ${formData.experience || "Not provided"}`,
-      `Availability: ${formData.availability || "Not provided"}`,
-      `CV: ${cvData.fileName}`,
-      `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}`
-    ].join('\n') + formatRecruitmentTracking(formData);
+    const recruitmentMessage = `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}` + formatRecruitmentTracking(formData);
 
     sendWeb3FormsNotification('Recruitment Application', {
       name: name,
       email: formData.email,
       phone: formData.phone,
+      fields: {
+        'Role': formData.role || 'Not selected',
+        'Address': formData.address || 'Not provided',
+        'License Type': formData.licenseType || formData['license-type'] || 'Not provided',
+        'License Years': formData.licenseYears || formData['license-years'] || 'Not provided',
+        'Experience': formData.experience || 'Not provided',
+        'Availability': formData.availability || 'Not provided',
+        'CV': cvData.fileName
+      },
       message: recruitmentMessage,
       submissionId: recordId
     }, RECRUITMENT_NOTIFY_EMAIL);
