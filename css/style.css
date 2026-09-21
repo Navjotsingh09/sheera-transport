@@ -3234,6 +3234,15 @@ html, body { overflow-x: hidden; max-width: 100vw; }
    ADMIN PAGES
    =================================================================== */
 
+/* Admin/Login static page header (logo is white, needs a dark background) */
+.site-header {
+    background: var(--dark-blue);
+    padding: 1rem 0;
+}
+.site-header .nav-logo-img {
+    height: 40px;
+}
+
 /* Admin Login Page */
 .admin-login-section {
     min-height: calc(100vh - 80px - 200px);
