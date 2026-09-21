@@ -26,9 +26,9 @@ async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAI
       to,
       ...(includeCc ? { cc: SECONDARY_NOTIFY_EMAIL } : {}),
       'Form Type': formType,
-      'Name': data.name || 'Not provided',
-      'Email': data.email || 'Not provided',
-      'Phone': data.phone || 'Not provided',
+      'name': data.name || 'Not provided',
+      'email': data.email || 'Not provided',
+      'phone': data.phone || 'Not provided',
       ...(data.fields || {}),
       'Details': data.message || '',
       'Submission ID': data.submissionId || ''
