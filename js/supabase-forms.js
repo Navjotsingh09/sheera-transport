@@ -173,6 +173,17 @@ function formatRecruitmentTracking(formData) {
   ].join('\n');
 }
 
+// Tracking metadata as its own group of Web3Forms fields, separate from Details/Additional Info.
+function buildTrackingFields(formData) {
+  return {
+    'Tracking: Source URL': formData.source_url || 'Not provided',
+    'Tracking: UTM Source': formData.utm_source || 'Not provided',
+    'Tracking: UTM Medium': formData.utm_medium || 'Not provided',
+    'Tracking: UTM Campaign': formData.utm_campaign || 'Not provided',
+    'Tracking: UTM Content': formData.utm_content || 'Not provided'
+  };
+}
+
 /**
  * Upload CV file to Supabase Storage ('cv-uploads' bucket)
  */
@@ -291,7 +302,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
     console.log("✅ Recruitment form saved to Supabase:", recordId);
 
     const name = formData.fullName || formData['full-name'];
-    const recruitmentMessage = `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}` + formatRecruitmentTracking(formData);
+    const recruitmentMessage = `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}`;
 
     sendWeb3FormsNotification('Recruitment Application', {
       name: name,
@@ -304,7 +315,8 @@ export async function submitRecruitmentForm(formData, cvFile) {
         'License Years': formData.licenseYears || formData['license-years'] || 'Not provided',
         'Experience': formData.experience || 'Not provided',
         'Availability': formData.availability || 'Not provided',
-        'CV': cvData.fileName
+        'CV': cvData.fileName,
+        ...buildTrackingFields(formData)
       },
       message: recruitmentMessage,
       submissionId: recordId,
