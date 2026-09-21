@@ -228,7 +228,9 @@ function validateForm(formId) {
 
         inputs.forEach(input => {
             let msg = '';
-            if (!input.value.trim()) msg = 'This field is required';
+            if (input.type === 'file') {
+                if (!input.files.length) msg = 'Please upload your CV';
+            } else if (!input.value.trim()) msg = 'This field is required';
             else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) msg = 'Please enter a valid email';
             else if (input.type === 'tel' && (!/^[\d\s\-\+\(\)]+$/.test(input.value) || input.value.length < 10)) msg = 'Please enter a valid phone number';
             if (msg) {

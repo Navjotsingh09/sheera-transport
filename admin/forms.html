@@ -10,7 +10,7 @@
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seehra Transport - Form Submissions</title>
+    <title>Seehra Transport - Recruitment Applications</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <style>
         :root {
@@ -259,6 +259,192 @@
 
         /* Table horizontal scroll wrapper */
         .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -0.5rem; padding: 0 0.5rem; }
+        .recruitment-only .tabs,
+        .recruitment-only #tab0,
+        .recruitment-only #tab2 { display: none; }
+
+        /* Stats bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 1.1rem 1.25rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid var(--dark-blue);
+        }
+        .stat-card .stat-value { font-size: 1.75rem; font-weight: 800; line-height: 1; }
+        .stat-card .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--gray-mid); margin-top: 0.4rem; }
+        .stat-card.pending { border-left-color: var(--red); }
+        .stat-card.approved { border-left-color: #1D6F35; }
+        .stat-card.declined { border-left-color: var(--gray-mid); }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+        .search-input {
+            flex: 1 1 240px;
+            min-width: 180px;
+            padding: 0.65rem 1rem;
+            border: 2px solid rgba(0, 16, 96, 0.15);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        .search-input:focus { outline: none; border-color: var(--dark-blue); box-shadow: 0 0 0 3px rgba(0, 16, 96, 0.1); }
+        .toolbar select {
+            padding: 0.65rem 1rem;
+            border: 2px solid rgba(0, 16, 96, 0.15);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--white);
+            color: var(--dark-blue);
+            cursor: pointer;
+        }
+        .toolbar select:focus { outline: none; border-color: var(--dark-blue); }
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--white);
+            color: var(--dark-blue);
+            border: 2px solid rgba(0, 16, 96, 0.15);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .refresh-btn:hover { border-color: var(--dark-blue); background: rgba(0, 16, 96, 0.04); }
+        .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .refresh-btn .spin { display: inline-block; }
+        .refresh-btn.loading .spin { animation: spin 0.8s linear infinite; }
+        .updated-label { margin-left: auto; color: var(--gray-mid); font-size: 0.8rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Applicant identity */
+        .applicant-cell { display: flex; align-items: center; gap: 0.65rem; }
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--dark-blue);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .applicant-name { font-weight: 600; }
+
+        /* Truncation for long tracking values */
+        .truncate {
+            max-width: 170px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: bottom;
+        }
+
+        /* CV actions */
+        .cv-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+        /* Status pill with dot */
+        .status { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+        /* Skeleton loading state */
+        .skeleton {
+            height: 14px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, rgba(0, 16, 96, 0.06) 25%, rgba(0, 16, 96, 0.13) 37%, rgba(0, 16, 96, 0.06) 63%);
+            background-size: 400% 100%;
+            animation: shimmer 1.4s ease infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+        /* Toasts */
+        .toast-container {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            max-width: min(360px, calc(100vw - 2.5rem));
+        }
+        .toast {
+            background: var(--dark-blue);
+            color: var(--white);
+            padding: 0.9rem 1.1rem;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: toast-in 0.25s ease;
+        }
+        .toast.success { background: #1D6F35; }
+        .toast.error { background: #C30A0A; }
+        .toast.leaving { animation: toast-out 0.2s ease forwards; }
+        @keyframes toast-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toast-out { to { opacity: 0; transform: translateX(20px); } }
+
+        /* Confirm dialog */
+        #confirmDialog::backdrop, #messageDialog::backdrop { background: rgba(0, 16, 96, 0.45); }
+        .dialog-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem; }
+
+        .no-data-icon { font-size: 1.75rem; display: block; margin-bottom: 0.5rem; opacity: 0.5; }
+
+        @media (max-width: 640px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .updated-label { margin-left: 0; width: 100%; }
+
+            /* Card layout for the recruitment table on small screens */
+            .card-table thead { display: none; }
+            .card-table, .card-table tbody, .card-table tr, .card-table td { display: block; width: 100%; }
+            .card-table { box-shadow: none; background: none; }
+            .card-table tr {
+                margin-bottom: 1rem;
+                background: var(--white);
+                border: 1px solid rgba(0, 16, 96, 0.08);
+                border-radius: 10px;
+                padding: 0.75rem 1rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            }
+            .card-table td {
+                border-top: none;
+                padding: 0.5rem 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1rem;
+                text-align: right;
+            }
+            .card-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--gray-mid);
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+                text-align: left;
+            }
+            .card-table td[data-label="Actions"] { flex-wrap: wrap; justify-content: flex-end; }
+            .card-table .truncate { max-width: 160px; }
+        }
     </style>
 </head>
 <body>
@@ -270,7 +456,7 @@
     <div id="login" class="login-screen">
         <div class="login-box">
             <h1 class="login-title">Admin</h1>
-            <p class="login-subtitle">Form Submissions</p>
+            <p class="login-subtitle">Recruitment Applications</p>
             
             <div id="error" class="error"></div>
 
@@ -293,9 +479,9 @@
     </div>
 
     <!-- Dashboard -->
-    <div id="dashboard" class="dashboard">
+    <div id="dashboard" class="dashboard recruitment-only">
         <div class="header">
-            <h1>Form Submissions</h1>
+            <h1>Recruitment Applications</h1>
             <div style="text-align: right;">
                 <p style="margin-bottom: 0.5rem;"><strong id="userEmail"></strong></p>
                 <button class="logout-btn" id="logoutBtn">Logout</button>
@@ -304,12 +490,10 @@
 
         <div class="content">
             <div class="tabs">
-                <button class="tab-btn active" data-tab="0">📧 Contact</button>
-                <button class="tab-btn" data-tab="1">👤 Recruitment</button>
-                <button class="tab-btn" data-tab="2">🚗 Bookings</button>
+                <button class="tab-btn active" data-tab="1">👤 Recruitment</button>
             </div>
 
-            <div id="tab0" class="tab-panel active">
+            <div id="tab0" class="tab-panel">
                 <div class="table-scroll"><table id="contactTable">
                     <thead>
                         <tr>
@@ -326,14 +510,30 @@
                 <div id="contactEmpty" class="no-data">No contact submissions yet</div>
             </div>
 
-            <div id="tab1" class="tab-panel">
-                <div class="table-scroll"><table id="recruitmentTable">
+            <div id="tab1" class="tab-panel active">
+                <div id="recruitmentStats" class="stats-grid"></div>
+                <div class="toolbar">
+                    <input type="search" id="recruitmentSearch" class="search-input" placeholder="Search by name or email…" aria-label="Search applications">
+                    <select id="recruitmentStatusFilter" aria-label="Filter by status">
+                        <option value="all">All statuses</option>
+                        <option value="pending">Pending review</option>
+                        <option value="approved">Approved</option>
+                        <option value="declined">Declined</option>
+                    </select>
+                    <button type="button" class="refresh-btn" id="refreshRecruitment"><span class="spin">⟳</span> Refresh</button>
+                    <span id="recruitmentUpdated" class="updated-label"></span>
+                </div>
+                <div class="table-scroll"><table id="recruitmentTable" class="card-table">
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
                             <th>License Type</th>
+                            <th>License Years</th>
                             <th>Experience</th>
+                            <th>Availability</th>
                             <th>CV</th>
                             <th>Source URL</th>
                             <th>Campaign</th>
@@ -344,8 +544,50 @@
                     </thead>
                     <tbody id="recruitmentData"></tbody>
                 </table></div>
-                <div id="recruitmentEmpty" class="no-data">No applications yet</div>
+                <div id="recruitmentEmpty" class="no-data" style="display:none;"><span class="no-data-icon">📭</span>No applications yet</div>
             </div>
+
+            <dialog id="messageDialog" style="border:0;border-radius:8px;padding:0;max-width:520px;width:calc(100% - 2rem);">
+                <form method="dialog" id="messageForm" style="padding:1.5rem;">
+                    <h2 style="margin:0 0 1rem;color:var(--dark-blue);">Message applicant</h2>
+                    <p id="messageRecipient" style="margin:0 0 1rem;color:var(--gray-dark);"></p>
+                    <div class="form-group">
+                        <label class="form-label" for="messageSubject">Subject</label>
+                        <input id="messageSubject" required value="Your Seehra Transport application">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="messageBody">Message</label>
+                        <textarea id="messageBody" required rows="6" style="width:100%;padding:0.75rem;border:2px solid rgba(0,16,96,0.15);border-radius:6px;font:inherit;resize:vertical;"></textarea>
+                    </div>
+                    <div class="dialog-actions">
+                        <button type="button" class="action-btn decline-btn" id="cancelMessage">Cancel</button>
+                        <button type="submit" class="action-btn approve-btn">Send message</button>
+                    </div>
+                </form>
+            </dialog>
+
+            <dialog id="confirmDialog" style="border:0;border-radius:8px;padding:0;max-width:420px;width:calc(100% - 2rem);">
+                <form method="dialog" style="padding:1.5rem;">
+                    <h2 style="margin:0 0 0.75rem;color:var(--dark-blue);font-size:1.15rem;">Confirm action</h2>
+                    <p id="confirmMessage" style="margin:0;color:var(--gray-dark);"></p>
+                    <div class="dialog-actions">
+                        <button type="button" class="action-btn decline-btn" id="confirmCancel">Cancel</button>
+                        <button type="button" class="action-btn approve-btn" id="confirmOk">Confirm</button>
+                    </div>
+                </form>
+            </dialog>
+
+            <dialog id="detailsDialog" style="border:0;border-radius:8px;padding:0;max-width:560px;width:calc(100% - 2rem);">
+                <form method="dialog" style="padding:1.5rem;">
+                    <h2 id="detailsTitle" style="margin:0 0 1rem;color:var(--dark-blue);"></h2>
+                    <pre id="detailsBody" style="white-space:pre-wrap;font:inherit;margin:0;color:var(--gray-dark);max-height:60vh;overflow:auto;"></pre>
+                    <div class="dialog-actions">
+                        <button type="submit" class="action-btn approve-btn">Close</button>
+                    </div>
+                </form>
+            </dialog>
+
+            <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
             <div id="tab2" class="tab-panel">
                 <div class="table-scroll"><table id="bookingTable">
@@ -377,6 +619,12 @@
         const errorDiv = document.getElementById('error');
         const userEmail = document.getElementById('userEmail');
         const tabs = document.querySelectorAll('.tab-btn');
+        const messageDialog = document.getElementById('messageDialog');
+        const messageForm = document.getElementById('messageForm');
+        const messageRecipient = document.getElementById('messageRecipient');
+        let messageTarget = null;
+        // Real applications now load directly from the database via /api/recruitment-admin.
+        let importedRecruitmentRows = [];
 
         // Tab switching
         tabs.forEach((btn, idx) => {
@@ -389,21 +637,14 @@
             });
         });
 
-        const ADMIN_EMAILS = new Set(['info@seehratransport.com']);
-
-        async function showDashboardForAdmin(user) {
-            const email = user?.email?.toLowerCase();
-            if (!email || !ADMIN_EMAILS.has(email)) {
-                await supabase.auth.signOut();
-                throw new Error('This account is not authorised to access form submissions.');
-            }
+        async function showDashboardForAdmin(email) {
             userEmail.textContent = email;
             loginScreen.style.display = 'none';
             dashboard.style.display = 'block';
-            loadData(0);
+            history.replaceState(null, '', '/admin/login');
+            loadData(1);
         }
 
-        // Supabase Auth Handler
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
@@ -411,9 +652,14 @@
             errorDiv.style.display = 'none';
 
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                await showDashboardForAdmin(data.user);
+                const response = await fetch('/api/recruitment-admin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'login', email, password })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Invalid credentials');
+                await showDashboardForAdmin(result.email);
             } catch (error) {
                 errorDiv.textContent = 'Login failed: ' + (error.message || 'Invalid credentials');
                 errorDiv.style.display = 'block';
@@ -422,23 +668,21 @@
 
         // Logout
         logoutBtn.addEventListener('click', async () => {
-            await supabase.auth.signOut();
+            await fetch('/api/recruitment-admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'logout' })
+            });
             loginScreen.style.display = 'flex';
             dashboard.style.display = 'none';
         });
 
-        // Auth state check
-        const { data: { user: activeUser } } = await supabase.auth.getUser();
-        if (activeUser) {
-            try {
-                await showDashboardForAdmin(activeUser);
-            } catch (error) {
-                errorDiv.textContent = error.message;
-                errorDiv.style.display = 'block';
-                loginScreen.style.display = 'flex';
-                dashboard.style.display = 'none';
-            }
-        } else {
+        try {
+            const response = await fetch('/api/recruitment-admin?session=1');
+            if (!response.ok) throw new Error('No active session');
+            const session = await response.json();
+            await showDashboardForAdmin(session.email);
+        } catch {
             loginScreen.style.display = 'flex';
             dashboard.style.display = 'none';
         }
@@ -447,6 +691,10 @@
             if (tabIndex === 0) loadContact();
             else if (tabIndex === 1) loadRecruitment();
             else if (tabIndex === 2) loadBooking();
+        }
+
+        function staffHeaders() {
+            return {};
         }
 
         function escapeHtml(value) {
@@ -458,6 +706,136 @@
                 '"': '&quot;'
             })[char]);
         }
+
+        function parseCsv(text) {
+            const rows = [];
+            let row = [];
+            let cell = '';
+            let quoted = false;
+
+            for (let index = 0; index < text.length; index += 1) {
+                const char = text[index];
+                const next = text[index + 1];
+                if (char === '"' && quoted && next === '"') {
+                    cell += '"';
+                    index += 1;
+                } else if (char === '"') {
+                    quoted = !quoted;
+                } else if (char === ',' && !quoted) {
+                    row.push(cell);
+                    cell = '';
+                } else if ((char === '\n' || char === '\r') && !quoted) {
+                    if (char === '\r' && next === '\n') index += 1;
+                    row.push(cell);
+                    if (row.some(value => value.trim())) rows.push(row);
+                    row = [];
+                    cell = '';
+                } else {
+                    cell += char;
+                }
+            }
+            row.push(cell);
+            if (row.some(value => value.trim())) rows.push(row);
+            return rows;
+        }
+
+        function importedRowFromCsv(headers, values) {
+            const source = Object.fromEntries(headers.map((header, index) => [header, values[index] || '']));
+            if (source['Form Type'] !== 'Recruitment Application') return null;
+            if (/\bqa\b|test/i.test(source.Name || '') || source.Email === 'navjot.singh@5rv.digital') return null;
+
+            const details = source.Details || '';
+            const readDetail = label => (details.match(new RegExp(`^${label}:\\s*(.+)$`, 'mi')) || [])[1] || '';
+            const sourceUrl = readDetail('Source URL');
+            const tracking = [
+                sourceUrl ? `Source URL: ${sourceUrl}` : '',
+                readDetail('UTM Source') ? `UTM Source: ${readDetail('UTM Source')}` : '',
+                readDetail('UTM Medium') ? `UTM Medium: ${readDetail('UTM Medium')}` : '',
+                readDetail('UTM Campaign') ? `UTM Campaign: ${readDetail('UTM Campaign')}` : ''
+            ].filter(Boolean).join('\n');
+
+            return {
+                id: `web3-${source['Submitted At']}-${source.Email}`,
+                full_name: source.Name.trim(),
+                email: source.Email.trim(),
+                license_type: readDetail('License'),
+                experience: readDetail('Experience'),
+                cv_url: '',
+                cv_file_name: readDetail('CV'),
+                additional_info: `${readDetail('Role') ? `Role: ${readDetail('Role')}\n` : ''}${tracking}`,
+                created_at: source['Submitted At'],
+                status: 'received via Web3Forms'
+            };
+        }
+
+        // Toast + confirm helpers (replace intrusive browser alert/confirm)
+        const toastContainer = document.getElementById('toastContainer');
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (type ? ' ' + type : '');
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('leaving');
+                setTimeout(() => toast.remove(), 200);
+            }, 3500);
+        }
+
+        const confirmDialog = document.getElementById('confirmDialog');
+        const confirmMessageEl = document.getElementById('confirmMessage');
+        function showConfirm(message) {
+            confirmMessageEl.textContent = message;
+            confirmDialog.showModal();
+            return new Promise(resolve => {
+                const okBtn = document.getElementById('confirmOk');
+                const cancelBtn = document.getElementById('confirmCancel');
+                const cleanup = () => {
+                    confirmDialog.close();
+                    okBtn.removeEventListener('click', onOk);
+                    cancelBtn.removeEventListener('click', onCancel);
+                };
+                const onOk = () => { cleanup(); resolve(true); };
+                const onCancel = () => { cleanup(); resolve(false); };
+                okBtn.addEventListener('click', onOk);
+                cancelBtn.addEventListener('click', onCancel);
+            });
+        }
+
+        function openMessageDialog(email, name) {
+            messageTarget = { email, name };
+            messageRecipient.textContent = `${name || 'Applicant'} <${email}>`;
+            document.getElementById('messageBody').value = '';
+            messageDialog.showModal();
+        }
+
+        document.getElementById('cancelMessage').addEventListener('click', () => messageDialog.close());
+        messageForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            if (!messageTarget) return;
+            const submitButton = messageForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            try {
+                const response = await fetch('/api/send-notification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'recruitment-message',
+                        to: messageTarget.email,
+                        name: messageTarget.name,
+                        subject: document.getElementById('messageSubject').value.trim(),
+                        message: document.getElementById('messageBody').value.trim()
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) throw new Error(result.error || 'Message could not be sent.');
+                messageDialog.close();
+                showToast('Message sent.', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
 
         function trackingValue(details, label) {
             const match = String(details || '').match(new RegExp(label + ':\\s*([^\\n]+)'));
@@ -501,116 +879,278 @@
             }
         }
 
-        async function loadRecruitment() {
-            try {
-                const { data, error } = await supabase
-                    .from('recruitment_submissions')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+        let recruitmentRowsCache = [];
 
-                const tbody = document.getElementById('recruitmentData');
-                const empty = document.getElementById('recruitmentEmpty');
-                tbody.innerHTML = '';
+        function renderSkeletonRows(tbody, count) {
+            tbody.innerHTML = Array.from({ length: count }).map(() => `
+                <tr class="skeleton-row">
+                    ${Array.from({ length: 10 }).map(() => '<td><div class="skeleton"></div></td>').join('')}
+                </tr>
+            `).join('');
+        }
 
-                if (error || !data || data.length === 0) {
-                    empty.style.display = 'block';
-                    return;
-                }
-                empty.style.display = 'none';
+        function renderRecruitmentStats(rows) {
+            const stats = document.getElementById('recruitmentStats');
+            const total = rows.length;
+            const approved = rows.filter(r => r.status === 'approved').length;
+            const declined = rows.filter(r => r.status === 'declined').length;
+            const pending = total - approved - declined;
+            stats.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${total}</div>
+                    <div class="stat-label">Total applications</div>
+                </div>
+                <div class="stat-card pending">
+                    <div class="stat-value">${pending}</div>
+                    <div class="stat-label">Pending review</div>
+                </div>
+                <div class="stat-card approved">
+                    <div class="stat-value">${approved}</div>
+                    <div class="stat-label">Approved</div>
+                </div>
+                <div class="stat-card declined">
+                    <div class="stat-value">${declined}</div>
+                    <div class="stat-label">Declined</div>
+                </div>
+            `;
+        }
 
-                data.forEach(d => {
-                    const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString('en-GB') : 'N/A';
-                    const cvLink = d.cv_url ? '<a href="#" class="cv-link" data-cv-path="' + d.cv_url + '" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">View CV</a>' : 'Not uploaded';
-                    const status = d.status || 'pending';
-                    const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : 'status-new';
-                    const decided = status === 'approved' || status === 'declined';
-                    const sourceUrl = trackingValue(d.additional_info, 'Source URL');
-                    const utmSource = trackingValue(d.additional_info, 'UTM Source');
-                    const utmMedium = trackingValue(d.additional_info, 'UTM Medium');
-                    const utmCampaign = trackingValue(d.additional_info, 'UTM Campaign');
-                    const campaignParts = [utmSource, utmMedium, utmCampaign].filter(Boolean).map(escapeHtml);
-                    tbody.innerHTML += `
-                        <tr data-id="${d.id}" data-email="${d.email || ''}" data-name="${d.full_name || ''}">
-                            <td>${d.full_name || 'N/A'}</td>
-                            <td>${d.email || 'N/A'}</td>
-                            <td>${d.license_type || 'N/A'}</td>
-                            <td>${d.experience || 'N/A'}</td>
-                            <td>${cvLink}</td>
-                            <td>${sourceUrl ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">Source</a>` : 'N/A'}</td>
-                            <td>${campaignParts.length ? campaignParts.join(' / ') : 'N/A'}</td>
-                            <td>${dateStr}</td>
-                            <td><span class="status ${statusClass}">${status}</span></td>
-                            <td>
-                                <button class="action-btn approve-btn" data-action="approved" ${decided ? 'disabled' : ''}>Approve</button>
-                                <button class="action-btn decline-btn" data-action="declined" ${decided ? 'disabled' : ''}>Decline</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                tbody.querySelectorAll('.cv-link').forEach(link => {
-                    link.addEventListener('click', async event => {
-                        event.preventDefault();
-                        const cvTab = window.open('', '_blank');
-                        if (!cvTab) {
-                            alert('Please allow pop-ups to open the CV.');
-                            return;
-                        }
-                        const { data: signedUrl, error } = await supabase.storage
-                            .from('cv-uploads')
-                            .createSignedUrl(link.dataset.cvPath, 60);
-                        if (error) {
-                            cvTab.close();
-                            alert('The CV could not be opened. Please try again.');
-                            return;
-                        }
-                        cvTab.location.href = signedUrl.signedUrl;
-                    });
-                });
-                tbody.querySelectorAll('.action-btn').forEach(btn => {
-                    btn.addEventListener('click', async event => {
-                        const row = event.target.closest('tr');
-                        const id = row.dataset.id;
-                        const email = row.dataset.email;
-                        const name = row.dataset.name;
-                        const decision = event.target.dataset.action; // 'approved' | 'declined'
+        const LICENSE_TYPE_LABELS = {
+            'cat-b': 'Category B (Car/Small Van)',
+            'cat-c1': 'Category C1 (Medium Goods)',
+            'cat-c': 'Category C (Large Goods)',
+            'cat-ce': 'Category C+E (Articulated)'
+        };
+        const EXPERIENCE_LABELS = {
+            'no-experience': 'No Professional Experience',
+            'less-1': 'Less than 1 year',
+            '1-3': '1-3 years',
+            '3-5': '3-5 years',
+            '5-plus': '5+ years'
+        };
+        const AVAILABILITY_LABELS = {
+            'rotating-up-to-six-days': 'Rotating schedule, up to six days per week'
+        };
 
-                        if (!confirm(`Mark this application as ${decision} and notify the applicant?`)) return;
+        function renderRecruitmentRows(rows) {
+            const tbody = document.getElementById('recruitmentData');
+            tbody.innerHTML = rows.map(d => {
+                const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString('en-GB') : 'N/A';
+                const cvEndpoint = d.cv_url ? '/api/recruitment-admin?cv=' + encodeURIComponent(d.cv_url) : '';
+                const cvFileName = d.cv_file_name && d.cv_file_name !== 'Not provided' ? d.cv_file_name : 'cv.pdf';
+                const cvLink = cvEndpoint
+                    ? `<div class="cv-actions">
+                        <button type="button" class="action-btn cv-link-btn" data-cv-endpoint="${escapeHtml(cvEndpoint)}" data-cv-filename="${escapeHtml(cvFileName)}" title="Open CV in a new tab">View CV</button>
+                        <button type="button" class="action-btn cv-link-btn" data-cv-endpoint="${escapeHtml(cvEndpoint)}" data-cv-filename="${escapeHtml(cvFileName)}" data-cv-download="1" title="Download CV">Save CV</button>
+                       </div>`
+                    : '<span style="color:var(--gray-mid);">Not provided</span>';
+                const status = d.status || 'pending';
+                const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : 'status-new';
+                const decided = status === 'approved' || status === 'declined';
+                const sourceUrl = trackingValue(d.additional_info, 'Source URL');
+                const utmSource = trackingValue(d.additional_info, 'UTM Source');
+                const utmMedium = trackingValue(d.additional_info, 'UTM Medium');
+                const utmCampaign = trackingValue(d.additional_info, 'UTM Campaign');
+                const campaignParts = [utmSource, utmMedium, utmCampaign].filter(Boolean).map(escapeHtml);
+                const campaignText = campaignParts.length ? campaignParts.join(' / ') : 'N/A';
+                const name = escapeHtml(d.full_name) || 'N/A';
+                const initials = (d.full_name || '?').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0].toUpperCase()).join('') || '?';
+                const licenseTypeText = LICENSE_TYPE_LABELS[d.license_type] || d.license_type;
+                const experienceText = EXPERIENCE_LABELS[d.experience] || d.experience;
+                const availabilityText = AVAILABILITY_LABELS[d.availability] || d.availability;
+                return `
+                    <tr data-id="${escapeHtml(d.id)}" data-email="${escapeHtml(d.email || '')}" data-name="${escapeHtml(d.full_name || '')}" data-details="${escapeHtml(d.additional_info || '')}">
+                        <td data-label="Name"><div class="applicant-cell"><span class="avatar">${escapeHtml(initials)}</span><span class="applicant-name">${name}</span></div></td>
+                        <td data-label="Email">${escapeHtml(d.email) || 'N/A'}</td>
+                        <td data-label="Phone">${escapeHtml(d.phone) || 'N/A'}</td>
+                        <td data-label="Address" class="truncate" title="${escapeHtml(d.address)}">${escapeHtml(d.address) || 'N/A'}</td>
+                        <td data-label="License Type">${escapeHtml(licenseTypeText) || 'N/A'}</td>
+                        <td data-label="License Years">${d.license_years ?? 'N/A'}</td>
+                        <td data-label="Experience">${escapeHtml(experienceText) || 'N/A'}</td>
+                        <td data-label="Availability">${escapeHtml(availabilityText) || 'N/A'}</td>
+                        <td data-label="CV">${cvLink}</td>
+                        <td data-label="Source URL">${sourceUrl ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener" class="truncate" title="${escapeHtml(sourceUrl)}" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">Source</a>` : 'N/A'}</td>
+                        <td data-label="Campaign"><span class="truncate" title="${campaignText}">${campaignText}</span></td>
+                        <td data-label="Date">${dateStr}</td>
+                        <td data-label="Status"><span class="status ${statusClass}">${escapeHtml(status)}</span></td>
+                        <td data-label="Actions">
+                            <button class="action-btn details-btn" data-action="details">Details</button>
+                            <button class="action-btn message-btn" data-action="message">Message</button>
+                            <button class="action-btn approve-btn" data-action="approved" ${decided ? 'disabled' : ''}>Approve</button>
+                            <button class="action-btn decline-btn" data-action="declined" ${decided ? 'disabled' : ''}>Decline</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
 
-                        row.querySelectorAll('.action-btn').forEach(b => b.disabled = true);
+            attachRecruitmentRowHandlers(tbody);
+        }
 
-                        const { error: updateError } = await supabase
-                            .from('recruitment_submissions')
-                            .update({ status: decision })
-                            .eq('id', id);
-
-                        if (updateError) {
-                            alert('Could not update the application status. Please try again.');
-                            row.querySelectorAll('.action-btn').forEach(b => b.disabled = false);
-                            return;
-                        }
-
+        function attachRecruitmentRowHandlers(tbody) {
+            tbody.querySelectorAll('.action-btn').forEach(btn => {
+                btn.addEventListener('click', async event => {
+                    const target = event.target;
+                    if (target.dataset.action === 'details') {
+                        const row = target.closest('tr');
+                        document.getElementById('detailsTitle').textContent = `${row.dataset.name || 'Applicant'} — Additional Info`;
+                        document.getElementById('detailsBody').textContent = row.dataset.details || 'No additional information provided.';
+                        document.getElementById('detailsDialog').showModal();
+                        return;
+                    }
+                    if (target.classList.contains('cv-link-btn')) {
+                        const endpoint = target.dataset.cvEndpoint;
+                        const fileName = target.dataset.cvFilename || 'cv.pdf';
+                        const isDownload = target.dataset.cvDownload === '1';
+                        // noopener would make window.open() return null, so we can't redirect it after the fetch
+                        const cvWindow = isDownload ? null : window.open('', '_blank');
+                        if (cvWindow) cvWindow.opener = null;
+                        target.disabled = true;
                         try {
-                            await fetch('/api/send-notification', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    type: decision === 'approved' ? 'recruitment-approved' : 'recruitment-declined',
-                                    to: email,
-                                    name: name
-                                })
-                            });
-                        } catch (notifyError) {
-                            console.warn('Applicant notification failed to send:', notifyError);
+                            const response = await fetch(endpoint, { headers: staffHeaders() });
+                            if (!response.ok) throw new Error('CV could not be retrieved.');
+                            const rawBlob = await response.blob();
+                            // force a PDF mime type so the browser renders it instead of prompting a download
+                            const blob = /\.pdf$/i.test(fileName) ? rawBlob.slice(0, rawBlob.size, 'application/pdf') : rawBlob;
+                            const blobUrl = URL.createObjectURL(blob);
+                            if (isDownload) {
+                                const link = document.createElement('a');
+                                link.href = blobUrl;
+                                link.download = fileName;
+                                document.body.appendChild(link);
+                                link.click();
+                                link.remove();
+                            } else if (cvWindow) {
+                                cvWindow.location.href = blobUrl;
+                            }
+                            setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+                        } catch (cvError) {
+                            if (cvWindow) cvWindow.close();
+                            showToast(cvError.message, 'error');
+                        } finally {
+                            target.disabled = false;
                         }
+                        return;
+                    }
 
-                        loadRecruitment();
-                    });
+                    const row = target.closest('tr');
+                    const id = row.dataset.id;
+                    const email = row.dataset.email;
+                    const name = row.dataset.name;
+                    const decision = target.dataset.action; // 'approved' | 'declined' | 'message'
+
+                    if (decision === 'message') {
+                        openMessageDialog(email, name);
+                        return;
+                    }
+
+                    const confirmed = await showConfirm(`Mark this application as ${decision} and notify the applicant?`);
+                    if (!confirmed) return;
+
+                    row.querySelectorAll('.action-btn').forEach(b => b.disabled = true);
+
+                    let updateError = null;
+                    if (id.startsWith('web3-')) {
+                        const imported = importedRecruitmentRows.find(item => item.id === id);
+                        if (imported) imported.status = decision;
+                    } else {
+                        const response = await fetch('/api/recruitment-admin', {
+                            method: 'PATCH',
+                            headers: { ...staffHeaders(), 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id, status: decision })
+                        });
+                        if (!response.ok) updateError = new Error('Application update failed');
+                    }
+
+                    if (updateError) {
+                        showToast('Could not update the application status. Please try again.', 'error');
+                        row.querySelectorAll('.action-btn').forEach(b => b.disabled = false);
+                        return;
+                    }
+
+                    try {
+                        await fetch('/api/send-notification', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: decision === 'approved' ? 'recruitment-approved' : 'recruitment-declined',
+                                to: email,
+                                name: name
+                            })
+                        });
+                    } catch (notifyError) {
+                        console.warn('Applicant notification failed to send:', notifyError);
+                    }
+
+                    showToast(`Application ${decision}.`, 'success');
+                    loadRecruitment();
                 });
+            });
+        }
+
+        function applyRecruitmentFilters() {
+            const searchTerm = document.getElementById('recruitmentSearch').value.trim().toLowerCase();
+            const statusFilter = document.getElementById('recruitmentStatusFilter').value;
+
+            const filtered = recruitmentRowsCache.filter(row => {
+                const matchesSearch = !searchTerm
+                    || (row.full_name || '').toLowerCase().includes(searchTerm)
+                    || (row.email || '').toLowerCase().includes(searchTerm);
+                const normalizedStatus = (row.status === 'approved' || row.status === 'declined') ? row.status : 'pending';
+                const matchesStatus = statusFilter === 'all' || normalizedStatus === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
+            const empty = document.getElementById('recruitmentEmpty');
+            if (filtered.length === 0) {
+                document.getElementById('recruitmentData').innerHTML = '';
+                empty.innerHTML = recruitmentRowsCache.length === 0
+                    ? '<span class="no-data-icon">📭</span>No applications yet'
+                    : '<span class="no-data-icon">🔍</span>No applications match your search or filter';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            renderRecruitmentRows(filtered);
+        }
+
+        document.getElementById('recruitmentSearch').addEventListener('input', applyRecruitmentFilters);
+        document.getElementById('recruitmentStatusFilter').addEventListener('change', applyRecruitmentFilters);
+        document.getElementById('refreshRecruitment').addEventListener('click', loadRecruitment);
+
+        async function loadRecruitment() {
+            const tbody = document.getElementById('recruitmentData');
+            const empty = document.getElementById('recruitmentEmpty');
+            const updatedLabel = document.getElementById('recruitmentUpdated');
+            const refreshBtn = document.getElementById('refreshRecruitment');
+
+            refreshBtn.disabled = true;
+            refreshBtn.classList.add('loading');
+            empty.style.display = 'none';
+            renderSkeletonRows(tbody, 3);
+
+            try {
+                const response = await fetch('/api/recruitment-admin', { headers: staffHeaders() });
+                const data = response.ok ? await response.json() : [];
+                if (!response.ok) throw new Error((data && data.error) || 'Recruitment data unavailable');
+
+                recruitmentRowsCache = [...(data || []), ...importedRecruitmentRows];
+                renderRecruitmentStats(recruitmentRowsCache);
+                applyRecruitmentFilters();
+                updatedLabel.textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB');
             } catch (error) {
                 console.error('Error loading recruitment:', error);
-                document.getElementById('recruitmentEmpty').style.display = 'block';
+                recruitmentRowsCache = [];
+                renderRecruitmentStats([]);
+                tbody.innerHTML = '';
+                empty.innerHTML = '<span class="no-data-icon">⚠️</span>Applications could not be loaded. Please refresh.';
+                empty.style.display = 'block';
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.classList.remove('loading');
             }
         }
+
 
         async function loadBooking() {
             try {

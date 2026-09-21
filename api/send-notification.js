@@ -25,6 +25,10 @@ const TEMPLATES = {
     html: `<p>Hi ${name || 'there'},</p>
       <p>Thank you for your interest in joining Seehra Transport. After careful review, we won't be proceeding with your application at this time. We wish you the best in your search.</p>
       <p>Best regards,<br>Seehra Transport Recruitment</p>`
+  }),
+  'recruitment-message': (name, subject, message) => ({
+    subject,
+    html: `<p>Hi ${name || 'there'},</p><p>${String(message).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]).replace(/\n/g, '<br>')}</p><p>Best regards,<br>Seehra Transport Recruitment</p>`
   })
 };
 
@@ -33,10 +37,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { type, to, name } = req.body || {};
+  const { type, to, name, subject: customSubject, message } = req.body || {};
 
   if (!type || !to) {
     return res.status(400).json({ error: 'Missing type or recipient' });
+  }
+
+  if (type === 'recruitment-message' && (!customSubject || !message || message.length > 10000)) {
+    return res.status(400).json({ error: 'A subject and message are required.' });
   }
 
   const buildTemplate = TEMPLATES[type];
@@ -47,7 +55,7 @@ export default async function handler(req, res) {
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Seehra Transport <onboarding@resend.dev>';
 
-  const { subject, html } = buildTemplate(name);
+  const { subject, html } = buildTemplate(name, customSubject, message);
 
   if (!RESEND_API_KEY) {
     console.error('RESEND_API_KEY is not configured');

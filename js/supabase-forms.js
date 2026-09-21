@@ -229,6 +229,10 @@ export async function submitContactForm(formData) {
  */
 export async function submitRecruitmentForm(formData, cvFile) {
   try {
+    if (!cvFile) {
+      return { success: false, error: 'A CV upload is required.' };
+    }
+
     let cvData = { fileName: "Not provided", url: "", path: "" };
 
     if (cvFile) {
@@ -239,6 +243,8 @@ export async function submitRecruitmentForm(formData, cvFile) {
           url: uploadResult.path,
           path: uploadResult.path
         };
+      } else {
+        return { success: false, error: 'CV upload failed. Please try again.' };
       }
     }
 
@@ -268,11 +274,22 @@ export async function submitRecruitmentForm(formData, cvFile) {
     console.log("✅ Recruitment form saved to Supabase:", recordId);
 
     const name = formData.fullName || formData['full-name'];
+    const recruitmentMessage = [
+      `Role: ${formData.role || "Not selected"}`,
+      `Address: ${formData.address || "Not provided"}`,
+      `License Type: ${formData.licenseType || formData['license-type'] || "Not provided"}`,
+      `License Years: ${formData.licenseYears || formData['license-years'] || "Not provided"}`,
+      `Experience: ${formData.experience || "Not provided"}`,
+      `Availability: ${formData.availability || "Not provided"}`,
+      `CV: ${cvData.fileName}`,
+      `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}`
+    ].join('\n') + formatRecruitmentTracking(formData);
+
     sendWeb3FormsNotification('Recruitment Application', {
       name: name,
       email: formData.email,
       phone: formData.phone,
-      message: `Role: ${formData.role || "Not selected"}\nLicense: ${formData.licenseType || formData['license-type']}\nExperience: ${formData.experience}\nCV: ${cvData.fileName}${formatRecruitmentTracking(formData)}`,
+      message: recruitmentMessage,
       submissionId: recordId
     }, RECRUITMENT_NOTIFY_EMAIL);
 

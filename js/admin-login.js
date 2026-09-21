@@ -7,13 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
 
-    // Demo credentials (in production, this would be handled by backend)
-    const demoCredentials = {
-        'admin001': { password: 'admin123', roles: ['admin', 'dispatcher', 'driver'], name: 'John Smith' },
-        'disp001': { password: 'disp123', roles: ['dispatcher'], name: 'Sarah Johnson' },
-        'driver001': { password: 'driver123', roles: ['driver'], name: 'Mike Williams' }
-    };
-
     // Toggle Password Visibility
     togglePassword.addEventListener('click', function() {
         const type = passwordInput.type === 'password' ? 'text' : 'password';
@@ -52,21 +45,26 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading state
         toggleLoadingState(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            // Check credentials
-            if (demoCredentials[employeeId] && demoCredentials[employeeId].password === password) {
-                const user = demoCredentials[employeeId];
-                
-                // Store user session
+        // Credentials are verified server-side against the recruitment API -
+        // no valid password is ever shipped in this file.
+        try {
+            const response = await fetch('/api/recruitment-admin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'login', email: employeeId, password })
+            });
+
+            if (response.ok) {
                 const sessionData = {
                     employeeId: employeeId,
-                    name: user.name,
-                    roles: user.roles,
+                    name: 'Administrator',
+                    roles: ['admin'],
                     loginTime: new Date().toISOString(),
                     rememberMe: rememberMe
                 };
-                
+
                 // Store in session storage (or local storage if remember me is checked)
                 if (rememberMe) {
                     localStorage.setItem('adminSession', JSON.stringify(sessionData));
@@ -74,18 +72,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     sessionStorage.setItem('adminSession', JSON.stringify(sessionData));
                 }
 
-                // If user has multiple roles, show role selection
-                if (user.roles.length > 1) {
-                    showRoleSelection(user.roles);
-                } else {
-                    // Redirect directly to dashboard with the single role
-                    redirectToDashboard(user.roles[0]);
-                }
+                redirectToDashboard('admin');
             } else {
                 showError('Invalid Employee ID or Password');
                 toggleLoadingState(false);
             }
-        }, 1500);
+        } catch (error) {
+            showError('Unable to reach the server. Please try again.');
+            toggleLoadingState(false);
+        }
     });
 
     // Show Error Message
@@ -149,8 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sessionData.selectedRole = role;
         storage.setItem(sessionKey, JSON.stringify(sessionData));
 
-        // Redirect to appropriate dashboard
-        window.location.href = 'dashboard.html';
+        window.location.href = 'forms.html';
     }
 
     // Check if user is already logged in
@@ -163,9 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
         
         if (sessionData.rememberMe && hoursDiff < 720) { // 30 days
-            window.location.href = 'dashboard.html';
+            window.location.href = 'forms.html';
         } else if (!sessionData.rememberMe && hoursDiff < 8) { // 8 hours
-            window.location.href = 'dashboard.html';
+            window.location.href = 'forms.html';
         } else {
             // Session expired, clear it
             localStorage.removeItem('adminSession');
