@@ -14,9 +14,12 @@ const SECONDARY_NOTIFY_EMAIL = 'navjot.singh@5rv.digital';
 /**
  * Send email notification via Web3Forms with fail-safe fallback
  */
+// Web3Forms default file attachment limit (Pro feature)
+const WEB3FORMS_MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+
 async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAIL) {
   try {
-    const buildPayload = (to, includeCc = true) => ({
+    const buildFields = (to, includeCc = true) => ({
       access_key: WEB3FORMS_ACCESS_KEY,
       subject: `New ${formType} — Seehra Transport`,
       from_name: 'Seehra Transport Website',
@@ -31,22 +34,35 @@ async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAI
       'Submission ID': data.submissionId || ''
     });
 
-    const payload = buildPayload(recipient);
+    const attachment = data.attachment && data.attachment.size <= WEB3FORMS_MAX_ATTACHMENT_BYTES
+      ? data.attachment
+      : null;
+    if (data.attachment && !attachment) {
+      console.warn('⚠️ Attachment exceeds Web3Forms 5MB limit — sending notification without it');
+    }
 
-    const response = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    // Attachments require multipart/form-data; the browser sets its own Content-Type/boundary.
+    const sendOne = (to, includeCc) => {
+      const fields = buildFields(to, includeCc);
+      if (attachment) {
+        const formData = new FormData();
+        Object.entries(fields).forEach(([key, value]) => formData.append(key, value));
+        formData.append('attachment', attachment, attachment.name);
+        return fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
+      }
+      return fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(fields)
+      });
+    };
 
+    const response = await sendOne(recipient, true);
     const resData = await response.json();
     if (resData.success) {
       if (formType === 'Recruitment Application' && recipient !== SECONDARY_NOTIFY_EMAIL) {
-        fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(buildPayload(SECONDARY_NOTIFY_EMAIL, false))
-        }).catch(error => console.warn('⚠️ Secondary Web3Forms notification failed:', error));
+        sendOne(SECONDARY_NOTIFY_EMAIL, false)
+          .catch(error => console.warn('⚠️ Secondary Web3Forms notification failed:', error));
       }
       console.log('✅ Web3Forms email notification sent successfully');
       return true;
@@ -291,7 +307,8 @@ export async function submitRecruitmentForm(formData, cvFile) {
         'CV': cvData.fileName
       },
       message: recruitmentMessage,
-      submissionId: recordId
+      submissionId: recordId,
+      attachment: cvFile
     }, RECRUITMENT_NOTIFY_EMAIL);
 
     // Thank-you email to the applicant
