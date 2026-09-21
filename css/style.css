@@ -2092,14 +2092,8 @@ a.footer-contact-item:hover svg { opacity: 1; }
 }
 
 /* ── Tablets & small laptops (1023px) ── */
-@media screen and (max-width: 1023px) {
-    :root { --gutter: 20px; }
-
-    /* Typography scaling */
-    h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
-    h2 { font-size: clamp(1.75rem, 3.5vw, 3rem); }
-
-    /* ── Navigation — switch to hamburger at tablet ── */
+/* ── Navigation — switch to hamburger earlier; 7 nav items no longer fit the pill below 1440px ── */
+@media screen and (max-width: 1439px) {
     .nav-menu {
         position: fixed; top: 0; left: 0; right: 0; bottom: 0;
         background: var(--dark-blue);
@@ -2148,6 +2142,14 @@ a.footer-contact-item:hover svg { opacity: 1; }
     .nav-search { display: none; }
     /* Disable the dim-siblings hover effect in mobile menu */
     .nav-list:hover .nav-item { opacity: 1; }
+}
+
+@media screen and (max-width: 1023px) {
+    :root { --gutter: 20px; }
+
+    /* Typography scaling */
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+    h2 { font-size: clamp(1.75rem, 3.5vw, 3rem); }
 
     /* Hero */
     .hero-brand { font-size: clamp(2rem, 6vw, 4rem); }
