@@ -231,8 +231,8 @@
     <!-- HR Separator -->
     <div class="container"><hr class="hr-reveal hr-reveal--light"></div>
 
-    <!-- Driver testimonial -->
-    <section class="testimonial-placeholder section">
+    <!-- Driver testimonial (hidden until approved testimonials are supplied) -->
+    <section class="testimonial-placeholder section" style="display:none;">
         <div class="container">
             <span class="section-tag">Driver Feedback</span>
             <h2 class="section-title">Hear From Our Drivers</h2>
@@ -288,7 +288,23 @@
                     <form id="recruitment-form">
                         <div class="form-group">
                             <label for="role" class="form-label">Role Applying For *</label>
-                            <input type="text" id="role" name="role" class="form-input" required readonly placeholder="Select a role above">
+                            <select id="role" name="role" class="form-select" required>
+                                <option value="">Please select...</option>
+                                <option value="Delivery Driver - Worcester">Delivery Driver - Worcester</option>
+                                <option value="Delivery Driver - Exmouth">Delivery Driver - Exmouth</option>
+                                <option value="Delivery Driver - Bristol">Delivery Driver - Bristol</option>
+                                <option value="Delivery Driver - Cheltenham">Delivery Driver - Cheltenham</option>
+                                <option value="Delivery Driver - Gloucester">Delivery Driver - Gloucester</option>
+                                <option value="Delivery Driver - Stroud">Delivery Driver - Stroud</option>
+                                <option value="Delivery Driver - Bridgwater">Delivery Driver - Bridgwater</option>
+                                <option value="Delivery Driver - Honiton">Delivery Driver - Honiton</option>
+                                <option value="Delivery Driver - Exeter">Delivery Driver - Exeter</option>
+                                <option value="Delivery Driver - Weston-super-Mare">Delivery Driver - Weston-super-Mare</option>
+                                <option value="Delivery Driver - Newton Abbot">Delivery Driver - Newton Abbot</option>
+                                <option value="Delivery Driver - Plymouth">Delivery Driver - Plymouth</option>
+                                <option value="Delivery Driver - Liskeard">Delivery Driver - Liskeard</option>
+                                <option value="Delivery Driver - HelloFresh Contract (Bristol to Gloucester)">Delivery Driver - HelloFresh Contract (Bristol to Gloucester)</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="full-name" class="form-label">Full Name *</label>
