@@ -5,10 +5,11 @@
 
 import { supabase } from './supabase-config.js';
 
-// WEB3FORMS ACCESS KEY
-const WEB3FORMS_ACCESS_KEY = 'e8ccf6b6-aca3-48fb-8cba-26a45c54c717';
+// Each Web3Forms access key is tied to a fixed destination inbox set in that form's dashboard Settings
+const WEB3FORMS_ACCESS_KEY = '54f6a9cb-96e4-45f0-9e1d-6bf90b0bf179'; // "Sheera Transport General Enquiry" -> info@
+const RECRUITMENT_WEB3FORMS_ACCESS_KEY = 'e8ccf6b6-aca3-48fb-8cba-26a45c54c717'; // "Sheera Transport Recruitment" -> recruit@
 const NOTIFY_EMAIL = 'info@seehratransport.com';
-const RECRUITMENT_NOTIFY_EMAIL = 'recurit@seehratransport.com';
+const RECRUITMENT_NOTIFY_EMAIL = 'recruit@seehratransport.com';
 const SECONDARY_NOTIFY_EMAIL = 'navjot.singh@5rv.digital';
 
 /**
@@ -17,14 +18,14 @@ const SECONDARY_NOTIFY_EMAIL = 'navjot.singh@5rv.digital';
 // Web3Forms default file attachment limit (Pro feature)
 const WEB3FORMS_MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
 
-async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAIL) {
+async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAIL, accessKey = WEB3FORMS_ACCESS_KEY) {
   try {
     const buildFields = (to, includeCc = true) => ({
-      access_key: WEB3FORMS_ACCESS_KEY,
+      access_key: accessKey,
       subject: `New ${formType} — Seehra Transport`,
       from_name: 'Seehra Transport Website',
       to,
-      ...(includeCc ? { cc: SECONDARY_NOTIFY_EMAIL } : {}),
+      ...(includeCc ? { ccemail: SECONDARY_NOTIFY_EMAIL } : {}),
       'Form Type': formType,
       'name': data.name || 'Not provided',
       'email': data.email || 'Not provided',
@@ -60,10 +61,6 @@ async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAI
     const response = await sendOne(recipient, true);
     const resData = await response.json();
     if (resData.success) {
-      if (formType === 'Recruitment Application' && recipient !== SECONDARY_NOTIFY_EMAIL) {
-        sendOne(SECONDARY_NOTIFY_EMAIL, false)
-          .catch(error => console.warn('⚠️ Secondary Web3Forms notification failed:', error));
-      }
       console.log('✅ Web3Forms email notification sent successfully');
       return true;
     } else {
@@ -83,9 +80,11 @@ export async function submitBusinessEnquiryNotification(formData) {
 
 /**
  * Send an applicant-facing notification (thank-you / approved / declined) via the
- * /api/send-notification serverless function. Fails silently so it never blocks a submission.
+ * /api/send-notification serverless function (Resend). On failure, records the failure
+ * on the submission row instead of misrouting through Web3Forms (which can't target
+ * an arbitrary customer address — see repo notes).
  */
-async function sendApplicantNotification(type, to, name) {
+async function sendApplicantNotification(type, to, name, table, recordId) {
   if (!to) return false;
   try {
     const response = await fetch('/api/send-notification', {
@@ -94,70 +93,27 @@ async function sendApplicantNotification(type, to, name) {
       body: JSON.stringify({ type, to, name })
     });
     const result = await response.json();
-    if (!response.ok) {
-      return sendApplicantNotificationFallback(type, to, name, result);
-    }
-    if (!result.success || result.fallbackRequired) {
-      return sendApplicantNotificationFallback(type, to, name, result);
+    if (!response.ok || !result.success) {
+      await markThankYouEmailFailed(table, recordId, result);
+      return false;
     }
     console.log('✅ Applicant notification sent:', type);
     return true;
   } catch (error) {
-    return sendApplicantNotificationFallback(type, to, name, error);
+    await markThankYouEmailFailed(table, recordId, error);
+    return false;
   }
 }
 
-const APPLICANT_NOTIFICATION_TEMPLATES = {
-  'contact-thankyou': (name) => ({
-    subject: 'Thank you for contacting Seehra Transport',
-    message: `Hi ${name || 'there'},\n\nThank you for reaching out to Seehra Transport. We've received your enquiry and one of our team members will get back to you shortly.\n\nBest regards,\nSeehra Transport`
-  }),
-  'recruitment-thankyou': (name) => ({
-    subject: 'Thank you for applying to Seehra Transport',
-    message: `Hi ${name || 'there'},\n\nThank you for applying to join the Seehra Transport team. We've received your application and our recruitment team will review it shortly.\n\nBest regards,\nSeehra Transport Recruitment`
-  }),
-  'recruitment-approved': (name) => ({
-    subject: 'Your application has been approved - Seehra Transport',
-    message: `Hi ${name || 'there'},\n\nGreat news! Your application to join Seehra Transport has been approved. Our team will be in touch shortly with next steps.\n\nBest regards,\nSeehra Transport Recruitment`
-  }),
-  'recruitment-declined': (name) => ({
-    subject: 'Update on your application - Seehra Transport',
-    message: `Hi ${name || 'there'},\n\nThank you for your interest in joining Seehra Transport. After careful review, we won't be proceeding with your application at this time. We wish you the best in your search.\n\nBest regards,\nSeehra Transport Recruitment`
-  })
-};
-
-async function sendApplicantNotificationFallback(type, to, name, reason) {
-  const buildTemplate = APPLICANT_NOTIFICATION_TEMPLATES[type];
-  if (!buildTemplate) return false;
-
+// Surfaces a failed thank-you email on the submission row for staff follow-up (requires
+// a `thankyou_email_status` column — see repo notes for the SQL to add it).
+async function markThankYouEmailFailed(table, recordId, reason) {
+  console.warn('⚠️ Applicant thank-you email failed:', reason);
+  if (!table || !recordId) return;
   try {
-    const { subject, message } = buildTemplate(name);
-    const response = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        access_key: WEB3FORMS_ACCESS_KEY,
-        subject,
-        from_name: 'Seehra Transport',
-        to,
-        email: to,
-        name: name || 'Applicant',
-        replyto: NOTIFY_EMAIL,
-        message
-      })
-    });
-
-    const result = await response.json();
-    if (!response.ok || !result.success) {
-      console.warn('⚠️ Applicant notification fallback failed:', result, reason);
-      return false;
-    }
-
-    console.log('✅ Applicant notification sent via Web3Forms fallback:', type);
-    return true;
-  } catch (fallbackError) {
-    console.warn('⚠️ Applicant notification dispatch failed:', fallbackError, reason);
-    return false;
+    await supabase.from(table).update({ thankyou_email_status: 'failed' }).eq('id', recordId);
+  } catch (updateError) {
+    console.warn('⚠️ Could not record thank-you email failure status:', updateError);
   }
 }
 
@@ -226,11 +182,13 @@ export async function submitContactForm(formData) {
 
     const { data, error } = await supabase
       .from('contact_submissions')
-      .insert([payload]);
+      .insert([payload])
+      .select()
+      .single();
 
     if (error) throw error;
 
-    const recordId = 'saved';
+    const recordId = data.id;
     console.log("✅ Contact form saved to Supabase:", recordId);
 
     // Trigger Web3Forms email (to staff)
@@ -243,7 +201,7 @@ export async function submitContactForm(formData) {
     });
 
     // Thank-you email to the person who submitted the enquiry
-    sendApplicantNotification('contact-thankyou', formData.email, formData.name);
+    sendApplicantNotification('contact-thankyou', formData.email, formData.name, 'contact_submissions', recordId);
 
     return { success: true, id: recordId };
   } catch (error) {
@@ -294,11 +252,13 @@ export async function submitRecruitmentForm(formData, cvFile) {
 
     const { data, error } = await supabase
       .from('recruitment_submissions')
-      .insert([payload]);
+      .insert([payload])
+      .select()
+      .single();
 
     if (error) throw error;
 
-    const recordId = 'saved';
+    const recordId = data.id;
     console.log("✅ Recruitment form saved to Supabase:", recordId);
 
     const name = formData.fullName || formData['full-name'];
@@ -321,10 +281,10 @@ export async function submitRecruitmentForm(formData, cvFile) {
       message: recruitmentMessage,
       submissionId: recordId,
       attachment: cvFile
-    }, RECRUITMENT_NOTIFY_EMAIL);
+    }, RECRUITMENT_NOTIFY_EMAIL, RECRUITMENT_WEB3FORMS_ACCESS_KEY);
 
     // Thank-you email to the applicant
-    sendApplicantNotification('recruitment-thankyou', formData.email, name);
+    sendApplicantNotification('recruitment-thankyou', formData.email, name, 'recruitment_submissions', recordId);
 
     return { success: true, id: recordId };
   } catch (error) {
@@ -350,11 +310,13 @@ export async function submitBookingForm(formData) {
 
     const { data, error } = await supabase
       .from('booking_submissions')
-      .insert([payload]);
+      .insert([payload])
+      .select()
+      .single();
 
     if (error) throw error;
 
-    const recordId = 'saved';
+    const recordId = data.id;
     console.log("✅ Booking form saved to Supabase:", recordId);
 
     sendWeb3FormsNotification('New Booking Request', {

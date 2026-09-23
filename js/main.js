@@ -181,8 +181,12 @@ function populateTrackingFields() {
     });
 }
 
-function showSubmissionModal(resultId) {
+function showSubmissionModal(resultId, formId) {
     document.querySelector('.submission-modal')?.remove();
+
+    const copy = formId === 'recruitment-form'
+        ? { kicker: 'Application Received', body: 'Your application has been saved successfully. Our team will review it and contact you shortly.' }
+        : { kicker: 'Message Received', body: 'Your details have been saved successfully. Our team will get back to you shortly.' };
 
     const modal = document.createElement('div');
     modal.className = 'submission-modal';
@@ -192,9 +196,9 @@ function showSubmissionModal(resultId) {
     modal.innerHTML = `
         <div class="submission-modal-card">
             <button type="button" class="submission-modal-close" aria-label="Close submission confirmation">&times;</button>
-            <p class="submission-modal-kicker">Application Received</p>
+            <p class="submission-modal-kicker">${copy.kicker}</p>
             <h2 id="submission-modal-title">Thank you for your submission.</h2>
-            <p>Your details have been saved successfully. Our team will review your application and contact you shortly.</p>
+            <p>${copy.body}</p>
             <p class="submission-modal-id">Reference: ${resultId.substring(0, 8)}...</p>
             <button type="button" class="btn btn-primary submission-modal-button">Close</button>
         </div>
@@ -272,7 +276,7 @@ function validateForm(formId) {
                 if (result && result.success) {
                     form.reset();
                     populateTrackingFields();
-                    showSubmissionModal(result.id);
+                    showSubmissionModal(result.id, formId);
                 } else {
                     throw new Error('Submission failed');
                 }
