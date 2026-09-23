@@ -180,15 +180,13 @@ export async function submitContactForm(formData) {
       created_at: new Date().toISOString()
     };
 
-    const { data, error } = await supabase
+    const recordId = crypto.randomUUID();
+    const { error } = await supabase
       .from('contact_submissions')
-      .insert([payload])
-      .select()
-      .single();
+      .insert([{ id: recordId, ...payload }]);
 
     if (error) throw error;
 
-    const recordId = data.id;
     console.log("✅ Contact form saved to Supabase:", recordId);
 
     // Trigger Web3Forms email (to staff)
@@ -250,15 +248,13 @@ export async function submitRecruitmentForm(formData, cvFile) {
       created_at: new Date().toISOString()
     };
 
-    const { data, error } = await supabase
+    const recordId = crypto.randomUUID();
+    const { error } = await supabase
       .from('recruitment_submissions')
-      .insert([payload])
-      .select()
-      .single();
+      .insert([{ id: recordId, ...payload }]);
 
     if (error) throw error;
 
-    const recordId = data.id;
     console.log("✅ Recruitment form saved to Supabase:", recordId);
 
     const name = formData.fullName || formData['full-name'];
@@ -308,15 +304,13 @@ export async function submitBookingForm(formData) {
       created_at: new Date().toISOString()
     };
 
-    const { data, error } = await supabase
+    const recordId = crypto.randomUUID();
+    const { error } = await supabase
       .from('booking_submissions')
-      .insert([payload])
-      .select()
-      .single();
+      .insert([{ id: recordId, ...payload }]);
 
     if (error) throw error;
 
-    const recordId = data.id;
     console.log("✅ Booking form saved to Supabase:", recordId);
 
     sendWeb3FormsNotification('New Booking Request', {
