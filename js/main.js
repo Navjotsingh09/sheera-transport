@@ -164,7 +164,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* ===== FORM VALIDATION WITH FIREBASE ===== */
-const SUPABASE_FORMS_MODULE = './supabase-forms.js?v=20260919-direct-navjot-copy';
+const SUPABASE_FORMS_MODULE = './supabase-forms.js?v=20260923-tracking-details';
 
 function populateTrackingFields() {
     const params = new URLSearchParams(window.location.search);

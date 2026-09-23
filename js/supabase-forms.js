@@ -216,7 +216,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
     console.log("✅ Recruitment form saved to Supabase:", recordId);
 
     const name = formData.fullName || formData['full-name'];
-    const recruitmentMessage = `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}`;
+    const recruitmentMessage = `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}${formatRecruitmentTracking(formData)}`;
 
     sendWeb3FormsNotification('Recruitment Application', {
       name: name,
