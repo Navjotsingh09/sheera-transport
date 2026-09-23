@@ -78,45 +78,6 @@ export async function submitBusinessEnquiryNotification(formData) {
   return { success: sent, id: 'email-sent' };
 }
 
-/**
- * Send an applicant-facing notification (thank-you / approved / declined) via the
- * /api/send-notification serverless function (Resend). On failure, records the failure
- * on the submission row instead of misrouting through Web3Forms (which can't target
- * an arbitrary customer address — see repo notes).
- */
-async function sendApplicantNotification(type, to, name, table, recordId) {
-  if (!to) return false;
-  try {
-    const response = await fetch('/api/send-notification', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, to, name })
-    });
-    const result = await response.json();
-    if (!response.ok || !result.success) {
-      await markThankYouEmailFailed(table, recordId, result);
-      return false;
-    }
-    console.log('✅ Applicant notification sent:', type);
-    return true;
-  } catch (error) {
-    await markThankYouEmailFailed(table, recordId, error);
-    return false;
-  }
-}
-
-// Surfaces a failed thank-you email on the submission row for staff follow-up (requires
-// a `thankyou_email_status` column — see repo notes for the SQL to add it).
-async function markThankYouEmailFailed(table, recordId, reason) {
-  console.warn('⚠️ Applicant thank-you email failed:', reason);
-  if (!table || !recordId) return;
-  try {
-    await supabase.from(table).update({ thankyou_email_status: 'failed' }).eq('id', recordId);
-  } catch (updateError) {
-    console.warn('⚠️ Could not record thank-you email failure status:', updateError);
-  }
-}
-
 function formatRecruitmentTracking(formData) {
   return [
     '',
@@ -198,9 +159,6 @@ export async function submitContactForm(formData) {
       submissionId: recordId
     });
 
-    // Thank-you email to the person who submitted the enquiry
-    sendApplicantNotification('contact-thankyou', formData.email, formData.name, 'contact_submissions', recordId);
-
     return { success: true, id: recordId };
   } catch (error) {
     console.error("❌ Error submitting contact form to Supabase:", error);
@@ -278,9 +236,6 @@ export async function submitRecruitmentForm(formData, cvFile) {
       submissionId: recordId,
       attachment: cvFile
     }, RECRUITMENT_NOTIFY_EMAIL, RECRUITMENT_WEB3FORMS_ACCESS_KEY);
-
-    // Thank-you email to the applicant
-    sendApplicantNotification('recruitment-thankyou', formData.email, name, 'recruitment_submissions', recordId);
 
     return { success: true, id: recordId };
   } catch (error) {
