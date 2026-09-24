@@ -357,6 +357,13 @@
             display: inline-block;
             vertical-align: bottom;
         }
+        .full-address {
+            min-width: 220px;
+            max-width: 320px;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            line-height: 1.45;
+        }
 
         /* CV actions */
         .cv-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
@@ -531,8 +538,10 @@
                             <th>Phone</th>
                             <th>Address</th>
                             <th>License Type</th>
+                            <th>Licence Issuing Country</th>
                             <th>Experience</th>
                             <th>Shift Type</th>
+                            <th>Right to Work</th>
                             <th>CV</th>
                             <th>Source URL</th>
                             <th>Campaign</th>
@@ -931,6 +940,15 @@
             'rotating-full-time': 'Rotating Shift, up to 6 days per week - Full time',
             'rotating-part-time': 'Rotating Shift, up to 6 days per week - Part Time'
         };
+        const LICENCE_COUNTRY_LABELS = {
+            'uk-driving-licence': 'UK driving licence',
+            'eu-driving-licence': 'EU driving licence'
+        };
+        const RIGHT_TO_WORK_LABELS = {
+            'uk-national': 'UK National',
+            'valid-working-visa': 'Valid Working Visa',
+            'settled-pre-settled-status': 'Settled / Pre-Settled Status'
+        };
 
         function renderRecruitmentRows(rows) {
             const tbody = document.getElementById('recruitmentData');
@@ -958,15 +976,21 @@
                 const licenseTypeText = LICENSE_TYPE_LABELS[d.license_type] || d.license_type;
                 const experienceText = EXPERIENCE_LABELS[d.experience] || d.experience;
                 const availabilityText = AVAILABILITY_LABELS[d.availability] || d.availability;
+                const licenceCountryValue = trackingValue(d.additional_info, 'Licence Issuing Country');
+                const rightToWorkValue = trackingValue(d.additional_info, 'Right to Work');
+                const licenceCountryText = LICENCE_COUNTRY_LABELS[licenceCountryValue] || licenceCountryValue;
+                const rightToWorkText = RIGHT_TO_WORK_LABELS[rightToWorkValue] || rightToWorkValue;
                 return `
                     <tr data-id="${escapeHtml(d.id)}" data-email="${escapeHtml(d.email || '')}" data-name="${escapeHtml(d.full_name || '')}" data-details="${escapeHtml(d.additional_info || '')}">
                         <td data-label="Name"><div class="applicant-cell"><span class="avatar">${escapeHtml(initials)}</span><span class="applicant-name">${name}</span></div></td>
                         <td data-label="Email">${escapeHtml(d.email) || 'N/A'}</td>
                         <td data-label="Phone">${escapeHtml(d.phone) || 'N/A'}</td>
-                        <td data-label="Address" class="truncate" title="${escapeHtml(d.address)}">${escapeHtml(d.address) || 'N/A'}</td>
+                        <td data-label="Address" class="full-address">${escapeHtml(d.address) || 'N/A'}</td>
                         <td data-label="License Type">${escapeHtml(licenseTypeText) || 'N/A'}</td>
+                        <td data-label="Licence Issuing Country">${escapeHtml(licenceCountryText) || 'N/A'}</td>
                         <td data-label="Experience">${escapeHtml(experienceText) || 'N/A'}</td>
                         <td data-label="Shift Type">${escapeHtml(availabilityText) || 'N/A'}</td>
+                        <td data-label="Right to Work">${escapeHtml(rightToWorkText) || 'N/A'}</td>
                         <td data-label="CV">${cvLink}</td>
                         <td data-label="Source URL">${sourceUrl ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener" class="truncate" title="${escapeHtml(sourceUrl)}" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">Source</a>` : 'N/A'}</td>
                         <td data-label="Campaign"><span class="truncate" title="${campaignText}">${campaignText}</span></td>
