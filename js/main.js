@@ -164,7 +164,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* ===== FORM VALIDATION WITH FIREBASE ===== */
-const SUPABASE_FORMS_MODULE = './supabase-forms.js?v=20260923-tracking-details';
+const SUPABASE_FORMS_MODULE = './supabase-forms.js?v=20260924-recruitment-fields';
 
 function populateTrackingFields() {
     const params = new URLSearchParams(window.location.search);

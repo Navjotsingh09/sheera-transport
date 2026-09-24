@@ -1135,12 +1135,10 @@
 
                 recruitmentRowsCache = [...(data || []), ...importedRecruitmentRows].filter(row => {
                     const email = (row.email || '').trim().toLowerCase();
-                    const name = (row.full_name || '').trim().toLowerCase();
-                    return !email.includes('example.com')
-                        && !email.includes('test')
-                        && !email.includes('qa')
-                        && !name.includes('test')
-                        && !name.includes('qa');
+                    const localPart = email.split('@')[0] || '';
+                    return !email.endsWith('@example.com')
+                        && email !== 'navjot.singh@5rv.digital'
+                        && !/^(qa[-._+]?test|test[-._+]?|qa[-._+])/.test(localPart);
                 });
                 renderRecruitmentStats(recruitmentRowsCache);
                 applyRecruitmentFilters();
