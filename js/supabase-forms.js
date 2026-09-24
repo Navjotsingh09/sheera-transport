@@ -26,10 +26,9 @@ async function sendWeb3FormsNotification(formType, data, accessKey = WEB3FORMS_A
       name: data.name || 'Not provided',
       email: data.email || 'Not provided',
       phone: data.phone || 'Not provided',
-      message: [
-        data.message || '',
-        data.submissionId ? `Submission ID: ${data.submissionId}` : ''
-      ].filter(Boolean).join('\n\n')
+      ...(data.fields || {}),
+      'Submission ID': data.submissionId || '',
+      message: data.message || ''
     });
 
     const attachment = data.attachment && data.attachment.size <= WEB3FORMS_MAX_ATTACHMENT_BYTES
@@ -85,6 +84,16 @@ function formatRecruitmentTracking(formData) {
     `UTM Campaign: ${formData.utm_campaign || 'Not provided'}`,
     `UTM Content: ${formData.utm_content || 'Not provided'}`
   ].join('\n');
+}
+
+function buildTrackingFields(formData) {
+  return {
+    'Tracking: Source URL': formData.source_url || 'Not provided',
+    'Tracking: UTM Source': formData.utm_source || 'Not provided',
+    'Tracking: UTM Medium': formData.utm_medium || 'Not provided',
+    'Tracking: UTM Campaign': formData.utm_campaign || 'Not provided',
+    'Tracking: UTM Content': formData.utm_content || 'Not provided'
+  };
 }
 
 /**
@@ -245,26 +254,28 @@ export async function submitRecruitmentForm(formData, cvFile) {
     console.log("✅ Recruitment form saved to Supabase:", recordId);
 
     const name = formData.fullName || formData['full-name'];
-    const recruitmentMessage = [
-      `Role: ${formData.role || "Not selected"}`,
-      `Address: ${formData.address || "Not provided"}`,
-      `License Type: ${formData.licenseType || formData['license-type'] || "Not provided"}`,
-      `Licence Issuing Country: ${formData['licence-country'] || "Not provided"}`,
-      `Driving Experience: ${formData.experience || "Not provided"}`,
-      `Shift Type: ${formData['shift-type'] || "Not provided"}`,
-      `Right to Work: ${formData['right-to-work'] || "Not provided"}`,
-      `Age Requirement: ${formData['age-requirement'] || "Not provided"}`,
-      `Penalty Points Declaration: ${formData['penalty-points-confirmation'] ? "Confirmed" : "Not confirmed"}`,
-      'Data Processing Consent: Given',
-      `Consent Timestamp: ${submittedAt}`,
-      `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}`,
-      formatRecruitmentTracking(formData)
-    ].join('\n');
+    const recruitmentMessage = formData.additionalInfo || formData['additional-info'] || 'Not provided';
 
     sendWeb3FormsNotification('Recruitment Application', {
       name: name,
       email: formData.email,
       phone: formData.phone,
+      fields: {
+        'Form Type': 'Recruitment Application',
+        'Role': formData.role || 'Not selected',
+        'Address': formData.address || 'Not provided',
+        'License Type': formData.licenseType || formData['license-type'] || 'Not provided',
+        'Licence Issuing Country': formData['licence-country'] || 'Not provided',
+        'Experience': formData.experience || 'Not provided',
+        'Shift Type': formData['shift-type'] || 'Not provided',
+        'Right To Work': formData['right-to-work'] || 'Not provided',
+        'Age Requirement': formData['age-requirement'] || 'Not provided',
+        'Penalty Points Declaration': formData['penalty-points-confirmation'] ? 'Confirmed' : 'Not confirmed',
+        'Data Processing Consent': 'Given',
+        'Consent Timestamp': submittedAt,
+        'CV': validatedCvFile.name,
+        ...buildTrackingFields(formData)
+      },
       message: recruitmentMessage,
       submissionId: recordId,
       attachment: validatedCvFile

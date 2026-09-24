@@ -13,7 +13,7 @@ const storage = getStorage();
 
 // ===== FormSubmit.co — zero-config email forwarding =====
 const NOTIFY_EMAIL = 'info@seehratransport.com';
-const RECRUITMENT_NOTIFY_EMAIL = 'recurit@seehratransport.com';
+const RECRUITMENT_NOTIFY_EMAIL = 'recruit@seehratransport.com';
 const FORMSUBMIT_URL = `https://formsubmit.co/ajax/${NOTIFY_EMAIL}`;
 
 /**
