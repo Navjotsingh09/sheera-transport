@@ -90,6 +90,28 @@ function formatRecruitmentTracking(formData) {
 /**
  * Upload CV file to Supabase Storage ('cv-uploads' bucket)
  */
+const CV_MAX_BYTES = 5 * 1024 * 1024;
+const CV_MIME_BY_EXTENSION = {
+  pdf: 'application/pdf',
+  doc: 'application/msword',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+};
+
+function validateCVFile(file) {
+  const extension = file?.name?.split('.').pop()?.toLowerCase();
+  const expectedMimeType = CV_MIME_BY_EXTENSION[extension];
+  if (!expectedMimeType || (file.type && file.type !== expectedMimeType)) {
+    return { error: 'Please upload a PDF or Word document.' };
+  }
+  if (file.size > CV_MAX_BYTES) {
+    return { error: 'CV file must be under 5 MB.' };
+  }
+  const normalizedFile = file.type
+    ? file
+    : new File([file], file.name, { type: expectedMimeType, lastModified: file.lastModified });
+  return { file: normalizedFile };
+}
+
 async function uploadCVToSupabase(file, applicantName) {
   try {
     const safeName = (applicantName || 'applicant').replace(/[^a-zA-Z0-9]/g, '_');
@@ -160,6 +182,11 @@ export async function submitRecruitmentForm(formData, cvFile) {
     if (!cvFile) {
       return { success: false, error: 'A CV upload is required.' };
     }
+    const cvValidation = validateCVFile(cvFile);
+    if (cvValidation.error) {
+      return { success: false, error: cvValidation.error };
+    }
+    const validatedCvFile = cvValidation.file;
     if (!formData['recruitment-consent']) {
       return { success: false, error: 'Data processing consent is required.' };
     }
@@ -167,7 +194,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
     let cvData = { fileName: "Not provided", url: "", path: "" };
 
     if (cvFile) {
-      const uploadResult = await uploadCVToSupabase(cvFile, formData.fullName || formData['full-name']);
+      const uploadResult = await uploadCVToSupabase(validatedCvFile, formData.fullName || formData['full-name']);
       if (uploadResult.success) {
         cvData = {
           fileName: cvFile.name,
@@ -240,7 +267,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       phone: formData.phone,
       message: recruitmentMessage,
       submissionId: recordId,
-      attachment: cvFile
+      attachment: validatedCvFile
     }, RECRUITMENT_WEB3FORMS_ACCESS_KEY);
 
     return { success: true, id: recordId };

@@ -164,7 +164,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* ===== FORM VALIDATION WITH FIREBASE ===== */
-const SUPABASE_FORMS_MODULE = './supabase-forms.js?v=20260924-consent-record';
+const SUPABASE_FORMS_MODULE = './supabase-forms.js?v=20260924-cv-validation';
 
 function populateTrackingFields() {
     const params = new URLSearchParams(window.location.search);
@@ -310,9 +310,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const lbl = document.querySelector('.file-label');
         if (!f) return;
         const mb = (f.size / 1024 / 1024).toFixed(2);
-        const ok = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-        if (!ok.includes(f.type)) { alert('Please upload a PDF or Word document'); fi.value=''; return; }
-        if (mb > 5) { alert('File must be under 5 MB'); fi.value=''; return; }
+        const extension = f.name.split('.').pop().toLowerCase();
+        const allowedExtensions = ['pdf', 'doc', 'docx'];
+        const allowedMimeTypes = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (!allowedExtensions.includes(extension) || (f.type && !allowedMimeTypes.includes(f.type))) { alert('Please upload a PDF or Word document'); fi.value=''; return; }
+        if (f.size > 5 * 1024 * 1024) { alert('File must be under 5 MB'); fi.value=''; return; }
         if (lbl) { lbl.textContent = f.name + ' (' + mb + ' MB)'; lbl.style.color='var(--success)'; lbl.style.borderColor='var(--success)'; }
     });
 });
