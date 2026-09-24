@@ -164,7 +164,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* ===== FORM VALIDATION WITH FIREBASE ===== */
-const SUPABASE_FORMS_MODULE = './supabase-forms.js?v=20260924-web3forms-cleanup';
+const SUPABASE_FORMS_MODULE = './supabase-forms.js?v=20260924-consent-record';
 
 function populateTrackingFields() {
     const params = new URLSearchParams(window.location.search);
@@ -234,6 +234,8 @@ function validateForm(formId) {
             let msg = '';
             if (input.type === 'file') {
                 if (!input.files.length) msg = 'Please upload your CV';
+            } else if (input.type === 'checkbox' && !input.checked) {
+                msg = 'Please confirm this requirement';
             } else if (!input.value.trim()) msg = 'This field is required';
             else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) msg = 'Please enter a valid email';
             else if (input.type === 'tel' && (!/^[\d\s\-\+\(\)]+$/.test(input.value) || input.value.length < 10)) msg = 'Please enter a valid phone number';

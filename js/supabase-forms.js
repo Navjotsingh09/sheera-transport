@@ -160,6 +160,9 @@ export async function submitRecruitmentForm(formData, cvFile) {
     if (!cvFile) {
       return { success: false, error: 'A CV upload is required.' };
     }
+    if (!formData['recruitment-consent']) {
+      return { success: false, error: 'Data processing consent is required.' };
+    }
 
     let cvData = { fileName: "Not provided", url: "", path: "" };
 
@@ -176,6 +179,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       }
     }
 
+    const submittedAt = new Date().toISOString();
     const payload = {
       full_name: formData.fullName || formData['full-name'],
       email: formData.email,
@@ -195,11 +199,13 @@ export async function submitRecruitmentForm(formData, cvFile) {
         `Right to Work: ${formData['right-to-work'] || "Not provided"}`,
         `Age Requirement: ${formData['age-requirement'] || "Not provided"}`,
         `Penalty Points Declaration: ${formData['penalty-points-confirmation'] ? "Confirmed" : "Not confirmed"}`,
+        'Data Processing Consent: Given',
+        `Consent Timestamp: ${submittedAt}`,
         formData.additionalInfo || formData['additional-info'] || "",
         formatRecruitmentTracking(formData)
       ].filter(Boolean).join('\n').trim(),
       status: "pending_review",
-      created_at: new Date().toISOString()
+      created_at: submittedAt
     };
 
     const recordId = crypto.randomUUID();
@@ -222,6 +228,8 @@ export async function submitRecruitmentForm(formData, cvFile) {
       `Right to Work: ${formData['right-to-work'] || "Not provided"}`,
       `Age Requirement: ${formData['age-requirement'] || "Not provided"}`,
       `Penalty Points Declaration: ${formData['penalty-points-confirmation'] ? "Confirmed" : "Not confirmed"}`,
+      'Data Processing Consent: Given',
+      `Consent Timestamp: ${submittedAt}`,
       `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}`,
       formatRecruitmentTracking(formData)
     ].join('\n');
