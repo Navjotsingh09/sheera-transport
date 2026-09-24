@@ -8,8 +8,6 @@ import { supabase } from './supabase-config.js';
 // Each Web3Forms access key is tied to a fixed destination inbox set in that form's dashboard Settings
 const WEB3FORMS_ACCESS_KEY = '54f6a9cb-96e4-45f0-9e1d-6bf90b0bf179'; // "Sheera Transport General Enquiry" -> info@
 const RECRUITMENT_WEB3FORMS_ACCESS_KEY = 'e8ccf6b6-aca3-48fb-8cba-26a45c54c717'; // "Sheera Transport Recruitment" -> recruit@
-const NOTIFY_EMAIL = 'info@seehratransport.com';
-const RECRUITMENT_NOTIFY_EMAIL = 'recruit@seehratransport.com';
 const SECONDARY_NOTIFY_EMAIL = 'navjot.singh@5rv.digital';
 
 /**
@@ -18,21 +16,20 @@ const SECONDARY_NOTIFY_EMAIL = 'navjot.singh@5rv.digital';
 // Web3Forms default file attachment limit (Pro feature)
 const WEB3FORMS_MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
 
-async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAIL, accessKey = WEB3FORMS_ACCESS_KEY) {
+async function sendWeb3FormsNotification(formType, data, accessKey = WEB3FORMS_ACCESS_KEY) {
   try {
-    const buildFields = (to, includeCc = true) => ({
+    const buildFields = () => ({
       access_key: accessKey,
       subject: `New ${formType} — Seehra Transport`,
       from_name: 'Seehra Transport Website',
-      to,
-      ...(includeCc ? { ccemail: SECONDARY_NOTIFY_EMAIL } : {}),
-      'Form Type': formType,
-      'name': data.name || 'Not provided',
-      'email': data.email || 'Not provided',
-      'phone': data.phone || 'Not provided',
-      ...(data.fields || {}),
-      'Details': data.message || '',
-      'Submission ID': data.submissionId || ''
+      ccemail: SECONDARY_NOTIFY_EMAIL,
+      name: data.name || 'Not provided',
+      email: data.email || 'Not provided',
+      phone: data.phone || 'Not provided',
+      message: [
+        data.message || '',
+        data.submissionId ? `Submission ID: ${data.submissionId}` : ''
+      ].filter(Boolean).join('\n\n')
     });
 
     const attachment = data.attachment && data.attachment.size <= WEB3FORMS_MAX_ATTACHMENT_BYTES
@@ -43,8 +40,8 @@ async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAI
     }
 
     // Attachments require multipart/form-data; the browser sets its own Content-Type/boundary.
-    const sendOne = (to, includeCc) => {
-      const fields = buildFields(to, includeCc);
+    const sendOne = () => {
+      const fields = buildFields();
       if (attachment) {
         const formData = new FormData();
         Object.entries(fields).forEach(([key, value]) => formData.append(key, value));
@@ -58,7 +55,7 @@ async function sendWeb3FormsNotification(formType, data, recipient = NOTIFY_EMAI
       });
     };
 
-    const response = await sendOne(recipient, true);
+    const response = await sendOne();
     const resData = await response.json();
     if (resData.success) {
       console.log('✅ Web3Forms email notification sent successfully');
@@ -225,7 +222,6 @@ export async function submitRecruitmentForm(formData, cvFile) {
       `Right to Work: ${formData['right-to-work'] || "Not provided"}`,
       `Age Requirement: ${formData['age-requirement'] || "Not provided"}`,
       `Penalty Points Declaration: ${formData['penalty-points-confirmation'] ? "Confirmed" : "Not confirmed"}`,
-      `CV: ${cvData.fileName}`,
       `Additional Info: ${formData.additionalInfo || formData['additional-info'] || "Not provided"}`,
       formatRecruitmentTracking(formData)
     ].join('\n');
@@ -237,7 +233,7 @@ export async function submitRecruitmentForm(formData, cvFile) {
       message: recruitmentMessage,
       submissionId: recordId,
       attachment: cvFile
-    }, RECRUITMENT_NOTIFY_EMAIL, RECRUITMENT_WEB3FORMS_ACCESS_KEY);
+    }, RECRUITMENT_WEB3FORMS_ACCESS_KEY);
 
     return { success: true, id: recordId };
   } catch (error) {
