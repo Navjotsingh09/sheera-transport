@@ -531,9 +531,8 @@
                             <th>Phone</th>
                             <th>Address</th>
                             <th>License Type</th>
-                            <th>License Years</th>
                             <th>Experience</th>
-                            <th>Availability</th>
+                            <th>Shift Type</th>
                             <th>CV</th>
                             <th>Source URL</th>
                             <th>Campaign</th>
@@ -929,7 +928,8 @@
             '5-plus': '5+ years'
         };
         const AVAILABILITY_LABELS = {
-            'rotating-up-to-six-days': 'Rotating schedule, up to six days per week'
+            'rotating-full-time': 'Rotating Shift, up to 6 days per week - Full time',
+            'rotating-part-time': 'Rotating Shift, up to 6 days per week - Part Time'
         };
 
         function renderRecruitmentRows(rows) {
@@ -965,9 +965,8 @@
                         <td data-label="Phone">${escapeHtml(d.phone) || 'N/A'}</td>
                         <td data-label="Address" class="truncate" title="${escapeHtml(d.address)}">${escapeHtml(d.address) || 'N/A'}</td>
                         <td data-label="License Type">${escapeHtml(licenseTypeText) || 'N/A'}</td>
-                        <td data-label="License Years">${d.license_years ?? 'N/A'}</td>
                         <td data-label="Experience">${escapeHtml(experienceText) || 'N/A'}</td>
-                        <td data-label="Availability">${escapeHtml(availabilityText) || 'N/A'}</td>
+                        <td data-label="Shift Type">${escapeHtml(availabilityText) || 'N/A'}</td>
                         <td data-label="CV">${cvLink}</td>
                         <td data-label="Source URL">${sourceUrl ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener" class="truncate" title="${escapeHtml(sourceUrl)}" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">Source</a>` : 'N/A'}</td>
                         <td data-label="Campaign"><span class="truncate" title="${campaignText}">${campaignText}</span></td>
@@ -1134,7 +1133,15 @@
                 const data = response.ok ? await response.json() : [];
                 if (!response.ok) throw new Error((data && data.error) || 'Recruitment data unavailable');
 
-                recruitmentRowsCache = [...(data || []), ...importedRecruitmentRows];
+                recruitmentRowsCache = [...(data || []), ...importedRecruitmentRows].filter(row => {
+                    const email = (row.email || '').trim().toLowerCase();
+                    const name = (row.full_name || '').trim().toLowerCase();
+                    return !email.includes('example.com')
+                        && !email.includes('test')
+                        && !email.includes('qa')
+                        && !name.includes('test')
+                        && !name.includes('qa');
+                });
                 renderRecruitmentStats(recruitmentRowsCache);
                 applyRecruitmentFilters();
                 updatedLabel.textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB');

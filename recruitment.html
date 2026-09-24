@@ -332,26 +332,48 @@
                                 <option value="cat-ce">Category C+E (Articulated)</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="license-years" class="form-label">Years Holding License *</label>
-                            <input type="number" id="license-years" name="license-years" class="form-input" min="0" required>
+                    <div class="form-group">
+                            <label for="licence-country" class="form-label">Licence Issuing Country *</label>
+                            <select id="licence-country" name="licence-country" class="form-select" required>
+                                <option value="">Please select...</option>
+                                <option value="uk-driving-licence">UK driving licence</option>
+                                <option value="eu-driving-licence">EU driving licence</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="experience" class="form-label">Driving Experience *</label>
                             <select id="experience" name="experience" class="form-select" required>
                                 <option value="">Please select...</option>
-                                <option value="no-experience">No Professional Experience</option>
-                                <option value="less-1">Less than 1 year</option>
-                                <option value="1-3">1-3 years</option>
-                                <option value="3-5">3-5 years</option>
-                                <option value="5-plus">5+ years</option>
+                                <option value="2-3 Years">2-3 Years</option>
+                                <option value="3-4 Years">3-4 Years</option>
+                                <option value="5-plus">5+ Years</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="availability" class="form-label">Availability *</label>
-                            <select id="availability" name="availability" class="form-select" required>
+                            <label for="shift-type" class="form-label">Shift Type *</label>
+                            <select id="shift-type" name="shift-type" class="form-select" required>
                                 <option value="">Please select...</option>
-                                <option value="rotating-up-to-six-days">Rotating schedule, up to six days per week</option>
+                                <option value="rotating-full-time">Rotating Shift, up to 6 days per week - Full time</option>
+                                <option value="rotating-part-time">Rotating Shift, up to 6 days per week - Part Time</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="right-to-work" class="form-label">Right to Work *</label>
+                            <select id="right-to-work" name="right-to-work" class="form-select" required>
+                                <option value="">Please select...</option>
+                                <option value="uk-national">UK National</option>
+                                <option value="valid-working-visa">Valid Working Visa</option>
+                                <option value="settled-pre-settled-status">Settled / Pre-Settled Status</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="age-requirement" class="form-label">Age Requirement *</label>
+                            <select id="age-requirement" name="age-requirement" class="form-select" required>
+                                <option value="">Please select...</option>
+                                <option value="23-29">23-29</option>
+                                <option value="30-39">30-39</option>
+                                <option value="40-49">40-49</option>
+                                <option value="50-plus">50+</option>
                             </select>
                         </div>
                         <div class="file-upload-group">
@@ -372,6 +394,12 @@
                             <label class="checkbox-label">
                                 <input type="checkbox" id="recruitment-consent" name="recruitment-consent" required>
                                 <span>I agree to the processing of my application and CV in accordance with the <a href="privacy-policy.html" class="portal-link">Privacy Policy</a>.</span>
+                            </label>
+                        </div>
+                        <div class="form-group form-group-checkbox">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="penalty-points-confirmation" name="penalty-points-confirmation" value="confirmed" required>
+                                <span>I confirm that I have no more than 6 penalty points and no convictions for drink driving or driving without insurance.</span>
                             </label>
                         </div>
                         <input type="hidden" name="source_url" data-tracking-field="source_url">
