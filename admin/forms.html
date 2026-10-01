@@ -465,8 +465,11 @@
         @keyframes toast-out { to { opacity: 0; transform: translateX(20px); } }
 
         /* Confirm dialog */
-        #confirmDialog::backdrop, #messageDialog::backdrop { background: rgba(0, 16, 96, 0.45); }
+        #confirmDialog::backdrop, #messageDialog::backdrop, #detailsDialog::backdrop { background: rgba(0, 16, 96, 0.45); }
         .dialog-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem; }
+
+        /* The universal margin:0 reset above overrides the UA margin:auto that centers <dialog> */
+        dialog { margin: auto; }
 
         .no-data-icon { font-size: 1.75rem; display: block; margin-bottom: 0.5rem; opacity: 0.5; }
 
