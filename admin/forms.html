@@ -265,17 +265,6 @@
         .recruitment-only #tab0,
         .recruitment-only #tab2 { display: none; }
 
-        /* Keep Actions column visible without scrolling the whole wide table */
-        #recruitmentTable th:last-child,
-        #recruitmentTable td:last-child {
-            position: sticky;
-            right: 0;
-            background: var(--white);
-            box-shadow: -4px 0 6px -4px rgba(0, 0, 0, 0.15);
-            white-space: nowrap;
-        }
-        #recruitmentTable th:last-child { background: #eef0f8; }
-
         /* Stats bar */
         .stats-grid {
             display: grid;
@@ -284,17 +273,30 @@
             margin-bottom: 1.5rem;
         }
         .stat-card {
+            position: relative;
             background: var(--white);
-            border-radius: 10px;
-            padding: 1.1rem 1.25rem;
+            border-radius: 14px;
+            padding: 1.25rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            border-left: 4px solid var(--dark-blue);
         }
-        .stat-card .stat-value { font-size: 1.75rem; font-weight: 800; line-height: 1; }
-        .stat-card .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--gray-mid); margin-top: 0.4rem; }
-        .stat-card.pending { border-left-color: var(--red); }
-        .stat-card.approved { border-left-color: #1D6F35; }
-        .stat-card.declined { border-left-color: var(--gray-mid); }
+        .stat-card .stat-icon {
+            position: absolute;
+            top: 1.1rem;
+            right: 1.1rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            background: rgba(0, 16, 96, 0.08);
+        }
+        .stat-card .stat-value { font-size: 1.9rem; font-weight: 800; line-height: 1; }
+        .stat-card .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--gray-mid); margin-top: 0.5rem; }
+        .stat-card.pending .stat-icon { background: rgba(255, 21, 0, 0.12); }
+        .stat-card.approved .stat-icon { background: rgba(29, 111, 53, 0.14); }
+        .stat-card.declined .stat-icon { background: rgba(102, 102, 102, 0.16); }
 
         /* Toolbar */
         .toolbar {
@@ -344,22 +346,62 @@
         .updated-label { margin-left: auto; color: var(--gray-mid); font-size: 0.8rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Applicant list (replaces the old wide table) */
+        .applicant-list {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+        .applicant-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-top: 1px solid rgba(0, 16, 96, 0.08);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .applicant-row:first-child { border-top: none; }
+        .applicant-row:hover, .applicant-row:focus-visible { background: rgba(0, 16, 96, 0.03); outline: none; }
+        .applicant-main { flex: 1; min-width: 0; }
+        .applicant-row-name { font-weight: 700; }
+        .applicant-row-meta {
+            font-size: 0.8rem;
+            color: var(--gray-mid);
+            margin-top: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .applicant-row-right { display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0; }
+        .applicant-chevron { color: var(--gray-mid); font-size: 1.3rem; line-height: 1; }
+        .skeleton-row .skeleton { background: linear-gradient(90deg, rgba(0, 16, 96, 0.06) 25%, rgba(0, 16, 96, 0.13) 37%, rgba(0, 16, 96, 0.06) 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+
         /* Applicant identity */
         .applicant-cell { display: flex; align-items: center; gap: 0.65rem; }
         .avatar {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: var(--dark-blue);
             color: var(--white);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 700;
             flex-shrink: 0;
         }
         .applicant-name { font-weight: 600; }
+
+        /* Details dialog */
+        .details-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; }
+        .details-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.9rem 1.5rem; font-size: 0.9rem; }
+        .details-grid .field-label { color: var(--gray-mid); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+        .details-grid .field-value { margin-top: 0.2rem; overflow-wrap: anywhere; }
+        .details-cv { margin-top: 1.1rem; }
+        .details-notes { margin-top: 0.9rem; font-size: 0.85rem; }
 
         /* Truncation for long tracking values */
         .truncate {
@@ -431,41 +473,9 @@
         @media (max-width: 640px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .updated-label { margin-left: 0; width: 100%; }
-
-            /* Card layout for the recruitment table on small screens */
-            .card-table thead { display: none; }
-            .card-table, .card-table tbody, .card-table tr, .card-table td { display: block; width: 100%; }
-            .card-table { box-shadow: none; background: none; }
-            #recruitmentTable th:last-child,
-            #recruitmentTable td:last-child { position: static; box-shadow: none; }
-            .card-table tr {
-                margin-bottom: 1rem;
-                background: var(--white);
-                border: 1px solid rgba(0, 16, 96, 0.08);
-                border-radius: 10px;
-                padding: 0.75rem 1rem;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            }
-            .card-table td {
-                border-top: none;
-                padding: 0.5rem 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 1rem;
-                text-align: right;
-            }
-            .card-table td::before {
-                content: attr(data-label);
-                font-weight: 600;
-                color: var(--gray-mid);
-                font-size: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.03em;
-                text-align: left;
-            }
-            .card-table td[data-label="Actions"] { flex-wrap: wrap; justify-content: flex-end; }
-            .card-table .truncate { max-width: 160px; }
+            .applicant-row { flex-wrap: wrap; }
+            .applicant-row-right { margin-left: 52px; }
+            .details-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -546,28 +556,7 @@
                     <button type="button" class="refresh-btn" id="refreshRecruitment"><span class="spin">⟳</span> Refresh</button>
                     <span id="recruitmentUpdated" class="updated-label"></span>
                 </div>
-                <div class="table-scroll"><table id="recruitmentTable" class="card-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Address</th>
-                            <th>License Type</th>
-                            <th>Licence Issuing Country</th>
-                            <th>Experience</th>
-                            <th>Shift Type</th>
-                            <th>Right to Work</th>
-                            <th>CV</th>
-                            <th>Source URL</th>
-                            <th>Campaign</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recruitmentData"></tbody>
-                </table></div>
+                <div id="recruitmentList" class="applicant-list"></div>
                 <div id="recruitmentEmpty" class="no-data" style="display:none;"><span class="no-data-icon">📭</span>No applications yet</div>
             </div>
 
@@ -601,12 +590,21 @@
                 </form>
             </dialog>
 
-            <dialog id="detailsDialog" style="border:0;border-radius:8px;padding:0;max-width:560px;width:calc(100% - 2rem);">
-                <form method="dialog" style="padding:1.5rem;">
-                    <h2 id="detailsTitle" style="margin:0 0 1rem;color:var(--dark-blue);"></h2>
-                    <pre id="detailsBody" style="white-space:pre-wrap;font:inherit;margin:0;color:var(--gray-dark);max-height:60vh;overflow:auto;"></pre>
+            <dialog id="detailsDialog" class="details-dialog" style="border:0;border-radius:12px;padding:0;max-width:640px;width:calc(100% - 2rem);">
+                <form method="dialog" style="padding:1.75rem;">
+                    <div class="details-header">
+                        <div>
+                            <h2 id="detailsTitle" style="margin:0;color:var(--dark-blue);"></h2>
+                            <p id="detailsMeta" style="margin:0.3rem 0 0;color:var(--gray-mid);font-size:0.85rem;"></p>
+                        </div>
+                        <span id="detailsStatus" class="status"></span>
+                    </div>
+                    <div id="detailsGrid" class="details-grid"></div>
+                    <div id="detailsCv" class="details-cv"></div>
+                    <div id="detailsNotes" class="details-notes"></div>
+                    <div id="detailsActions" class="dialog-actions" style="justify-content:flex-start;flex-wrap:wrap;margin-top:1.5rem;"></div>
                     <div class="dialog-actions">
-                        <button type="submit" class="action-btn approve-btn">Close</button>
+                        <button type="submit" class="action-btn decline-btn">Close</button>
                     </div>
                 </form>
             </dialog>
@@ -904,12 +902,17 @@
         }
 
         let recruitmentRowsCache = [];
+        let currentDetailsId = null;
 
-        function renderSkeletonRows(tbody, count) {
-            tbody.innerHTML = Array.from({ length: count }).map(() => `
-                <tr class="skeleton-row">
-                    ${Array.from({ length: 10 }).map(() => '<td><div class="skeleton"></div></td>').join('')}
-                </tr>
+        function renderSkeletonRows(container, count) {
+            container.innerHTML = Array.from({ length: count }).map(() => `
+                <div class="applicant-row skeleton-row">
+                    <div class="skeleton" style="width:40px;height:40px;border-radius:50%;flex-shrink:0;"></div>
+                    <div class="applicant-main">
+                        <div class="skeleton" style="width:35%;height:12px;margin-bottom:0.5rem;"></div>
+                        <div class="skeleton" style="width:55%;height:10px;"></div>
+                    </div>
+                </div>
             `).join('');
         }
 
@@ -918,21 +921,26 @@
             const total = rows.length;
             const approved = rows.filter(r => r.status === 'approved').length;
             const declined = rows.filter(r => r.status === 'declined').length;
-            const pending = total - approved - declined;
+            const archived = rows.filter(r => r.status === 'archived').length;
+            const pending = total - approved - declined - archived;
             stats.innerHTML = `
                 <div class="stat-card">
+                    <span class="stat-icon">📄</span>
                     <div class="stat-value">${total}</div>
                     <div class="stat-label">Total applications</div>
                 </div>
                 <div class="stat-card pending">
+                    <span class="stat-icon">⏳</span>
                     <div class="stat-value">${pending}</div>
                     <div class="stat-label">Pending review</div>
                 </div>
                 <div class="stat-card approved">
+                    <span class="stat-icon">✅</span>
                     <div class="stat-value">${approved}</div>
                     <div class="stat-label">Approved</div>
                 </div>
                 <div class="stat-card declined">
+                    <span class="stat-icon">✖️</span>
                     <div class="stat-value">${declined}</div>
                     <div class="stat-label">Declined</div>
                 </div>
@@ -967,202 +975,241 @@
         };
 
         function renderRecruitmentRows(rows) {
-            const tbody = document.getElementById('recruitmentData');
-            tbody.innerHTML = rows.map(d => {
+            const list = document.getElementById('recruitmentList');
+            list.innerHTML = rows.map(d => {
                 const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString('en-GB') : 'N/A';
-                const cvEndpoint = d.cv_url ? '/api/recruitment-admin?cv=' + encodeURIComponent(d.cv_url) : '';
-                const cvFileName = d.cv_file_name && d.cv_file_name !== 'Not provided' ? d.cv_file_name : 'cv.pdf';
-                const cvLink = cvEndpoint
-                    ? `<div class="cv-actions">
-                        <button type="button" class="action-btn cv-link-btn" data-cv-endpoint="${escapeHtml(cvEndpoint)}" data-cv-filename="${escapeHtml(cvFileName)}" title="Open CV in a new tab">View CV</button>
-                        <button type="button" class="action-btn cv-link-btn" data-cv-endpoint="${escapeHtml(cvEndpoint)}" data-cv-filename="${escapeHtml(cvFileName)}" data-cv-download="1" title="Download CV">Save CV</button>
-                       </div>`
-                    : '<span style="color:var(--gray-mid);">Not provided</span>';
                 const status = d.status || 'pending';
                 const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : status === 'archived' ? 'status-archived' : 'status-new';
-                const decided = status === 'approved' || status === 'declined' || status === 'archived';
-                const isArchived = status === 'archived';
-                const sourceUrl = trackingValue(d.additional_info, 'Source URL');
-                const utmSource = trackingValue(d.additional_info, 'UTM Source');
-                const utmMedium = trackingValue(d.additional_info, 'UTM Medium');
-                const utmCampaign = trackingValue(d.additional_info, 'UTM Campaign');
-                const campaignParts = [utmSource, utmMedium, utmCampaign].filter(Boolean).map(escapeHtml);
-                const campaignText = campaignParts.length ? campaignParts.join(' / ') : 'N/A';
                 const name = escapeHtml(d.full_name) || 'N/A';
                 const initials = (d.full_name || '?').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0].toUpperCase()).join('') || '?';
-                const licenseTypeText = LICENSE_TYPE_LABELS[d.license_type] || d.license_type;
-                const experienceText = EXPERIENCE_LABELS[d.experience] || d.experience;
-                const availabilityText = AVAILABILITY_LABELS[d.availability] || d.availability;
-                const licenceCountryValue = trackingValue(d.additional_info, 'Licence Issuing Country');
-                const rightToWorkValue = trackingValue(d.additional_info, 'Right to Work');
-                const licenceCountryText = LICENCE_COUNTRY_LABELS[licenceCountryValue] || licenceCountryValue;
-                const rightToWorkText = RIGHT_TO_WORK_LABELS[rightToWorkValue] || rightToWorkValue;
                 return `
-                    <tr data-id="${escapeHtml(d.id)}" data-email="${escapeHtml(d.email || '')}" data-name="${escapeHtml(d.full_name || '')}" data-details="${escapeHtml(d.additional_info || '')}">
-                        <td data-label="Name"><div class="applicant-cell"><span class="avatar">${escapeHtml(initials)}</span><span class="applicant-name">${name}</span></div></td>
-                        <td data-label="Email">${escapeHtml(d.email) || 'N/A'}</td>
-                        <td data-label="Phone">${escapeHtml(d.phone) || 'N/A'}</td>
-                        <td data-label="Address" class="full-address">${escapeHtml(d.address) || 'N/A'}</td>
-                        <td data-label="License Type">${escapeHtml(licenseTypeText) || 'N/A'}</td>
-                        <td data-label="Licence Issuing Country">${escapeHtml(licenceCountryText) || 'N/A'}</td>
-                        <td data-label="Experience">${escapeHtml(experienceText) || 'N/A'}</td>
-                        <td data-label="Shift Type">${escapeHtml(availabilityText) || 'N/A'}</td>
-                        <td data-label="Right to Work">${escapeHtml(rightToWorkText) || 'N/A'}</td>
-                        <td data-label="CV">${cvLink}</td>
-                        <td data-label="Source URL">${sourceUrl ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener" class="truncate" title="${escapeHtml(sourceUrl)}" style="color:var(--dark-blue);font-weight:700;text-decoration:underline;">Source</a>` : 'N/A'}</td>
-                        <td data-label="Campaign"><span class="truncate" title="${campaignText}">${campaignText}</span></td>
-                        <td data-label="Date">${dateStr}</td>
-                        <td data-label="Status"><span class="status ${statusClass}">${escapeHtml(status)}</span></td>
-                        <td data-label="Actions">
-                            <button class="action-btn details-btn" data-action="details">Details</button>
-                            <button class="action-btn message-btn" data-action="message">Message</button>
-                            <button class="action-btn approve-btn" data-action="approved" ${decided ? 'disabled' : ''}>Approve</button>
-                            <button class="action-btn decline-btn" data-action="declined" ${decided ? 'disabled' : ''}>Decline</button>
-                            <button class="action-btn archive-btn" data-action="archived" ${isArchived ? 'disabled' : ''}>Archive</button>
-                            <button class="action-btn delete-btn" data-action="delete">Delete</button>
-                        </td>
-                    </tr>
+                    <div class="applicant-row" data-id="${escapeHtml(d.id)}" tabindex="0" role="button" aria-label="View application from ${name}">
+                        <span class="avatar">${escapeHtml(initials)}</span>
+                        <div class="applicant-main">
+                            <div class="applicant-row-name">${name}</div>
+                            <div class="applicant-row-meta">${escapeHtml(d.email) || 'N/A'} · ${dateStr}</div>
+                        </div>
+                        <div class="applicant-row-right">
+                            <span class="status ${statusClass}">${escapeHtml(status)}</span>
+                            <span class="applicant-chevron">›</span>
+                        </div>
+                    </div>
                 `;
             }).join('');
 
-            attachRecruitmentRowHandlers(tbody);
-        }
-
-        function attachRecruitmentRowHandlers(tbody) {
-            tbody.querySelectorAll('.action-btn').forEach(btn => {
-                btn.addEventListener('click', async event => {
-                    const target = event.target;
-                    if (target.dataset.action === 'details') {
-                        const row = target.closest('tr');
-                        document.getElementById('detailsTitle').textContent = `${row.dataset.name || 'Applicant'} — Additional Info`;
-                        document.getElementById('detailsBody').textContent = row.dataset.details || 'No additional information provided.';
-                        document.getElementById('detailsDialog').showModal();
-                        return;
+            list.querySelectorAll('.applicant-row').forEach(rowEl => {
+                rowEl.addEventListener('click', () => openApplicantDetails(rowEl.dataset.id));
+                rowEl.addEventListener('keydown', event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openApplicantDetails(rowEl.dataset.id);
                     }
-                    if (target.classList.contains('cv-link-btn')) {
-                        const endpoint = target.dataset.cvEndpoint;
-                        const fileName = target.dataset.cvFilename || 'cv.pdf';
-                        const isDownload = target.dataset.cvDownload === '1';
-                        // noopener would make window.open() return null, so we can't redirect it after the fetch
-                        const cvWindow = isDownload ? null : window.open('', '_blank');
-                        if (cvWindow) cvWindow.opener = null;
-                        target.disabled = true;
-                        try {
-                            const response = await fetch(endpoint, { headers: staffHeaders() });
-                            if (!response.ok) throw new Error('CV could not be retrieved.');
-                            const rawBlob = await response.blob();
-                            // force a PDF mime type so the browser renders it instead of prompting a download
-                            const blob = /\.pdf$/i.test(fileName) ? rawBlob.slice(0, rawBlob.size, 'application/pdf') : rawBlob;
-                            const blobUrl = URL.createObjectURL(blob);
-                            if (isDownload) {
-                                const link = document.createElement('a');
-                                link.href = blobUrl;
-                                link.download = fileName;
-                                document.body.appendChild(link);
-                                link.click();
-                                link.remove();
-                            } else if (cvWindow) {
-                                cvWindow.location.href = blobUrl;
-                            }
-                            setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-                        } catch (cvError) {
-                            if (cvWindow) cvWindow.close();
-                            showToast(cvError.message, 'error');
-                        } finally {
-                            target.disabled = false;
-                        }
-                        return;
-                    }
-
-                    const row = target.closest('tr');
-                    const id = row.dataset.id;
-                    const email = row.dataset.email;
-                    const name = row.dataset.name;
-                    const decision = target.dataset.action; // 'approved' | 'declined' | 'archived' | 'delete' | 'message'
-
-                    if (decision === 'message') {
-                        openMessageDialog(email, name);
-                        return;
-                    }
-
-                    if (decision === 'delete') {
-                        const confirmedDelete = await showConfirm(`Permanently delete this application from ${name || 'this applicant'}? This cannot be undone.`);
-                        if (!confirmedDelete) return;
-
-                        row.querySelectorAll('.action-btn').forEach(b => b.disabled = true);
-
-                        if (id.startsWith('web3-')) {
-                            importedRecruitmentRows = importedRecruitmentRows.filter(item => item.id !== id);
-                        } else {
-                            const response = await fetch('/api/recruitment-admin', {
-                                method: 'DELETE',
-                                headers: { ...staffHeaders(), 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ id })
-                            });
-                            if (!response.ok) {
-                                showToast('Could not delete the application. Please try again.', 'error');
-                                row.querySelectorAll('.action-btn').forEach(b => b.disabled = false);
-                                return;
-                            }
-                        }
-
-                        showToast('Application deleted.', 'success');
-                        loadRecruitment();
-                        return;
-                    }
-
-                    const confirmMessageText = decision === 'archived'
-                        ? `Archive this application from ${name || 'this applicant'}?`
-                        : `Mark this application as ${decision} and notify the applicant?`;
-                    const confirmed = await showConfirm(confirmMessageText);
-                    if (!confirmed) return;
-
-                    row.querySelectorAll('.action-btn').forEach(b => b.disabled = true);
-
-                    let updateError = null;
-                    if (id.startsWith('web3-')) {
-                        const imported = importedRecruitmentRows.find(item => item.id === id);
-                        if (imported) imported.status = decision;
-                    } else {
-                        const response = await fetch('/api/recruitment-admin', {
-                            method: 'PATCH',
-                            headers: { ...staffHeaders(), 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id, status: decision })
-                        });
-                        if (!response.ok) updateError = new Error('Application update failed');
-                    }
-
-                    if (updateError) {
-                        showToast('Could not update the application status. Please try again.', 'error');
-                        row.querySelectorAll('.action-btn').forEach(b => b.disabled = false);
-                        return;
-                    }
-
-                    if (decision === 'archived') {
-                        showToast('Application archived.', 'success');
-                        loadRecruitment();
-                        return;
-                    }
-
-                    try {
-                        await fetch('/api/send-notification', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                type: decision === 'approved' ? 'recruitment-approved' : 'recruitment-declined',
-                                to: email,
-                                name: name
-                            })
-                        });
-                    } catch (notifyError) {
-                        console.warn('Applicant notification failed to send:', notifyError);
-                    }
-
-                    showToast(`Application ${decision}.`, 'success');
-                    loadRecruitment();
                 });
             });
         }
+
+        function openApplicantDetails(id) {
+            const row = recruitmentRowsCache.find(item => item.id === id);
+            if (!row) return;
+            currentDetailsId = id;
+
+            const status = row.status || 'pending';
+            const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : status === 'archived' ? 'status-archived' : 'status-new';
+            const decided = status === 'approved' || status === 'declined' || status === 'archived';
+            const isArchived = status === 'archived';
+            const dateStr = row.created_at ? new Date(row.created_at).toLocaleDateString('en-GB') : 'N/A';
+
+            const licenseTypeText = LICENSE_TYPE_LABELS[row.license_type] || row.license_type;
+            const experienceText = EXPERIENCE_LABELS[row.experience] || row.experience;
+            const availabilityText = AVAILABILITY_LABELS[row.availability] || row.availability;
+            const licenceCountryValue = trackingValue(row.additional_info, 'Licence Issuing Country');
+            const rightToWorkValue = trackingValue(row.additional_info, 'Right to Work');
+            const licenceCountryText = LICENCE_COUNTRY_LABELS[licenceCountryValue] || licenceCountryValue;
+            const rightToWorkText = RIGHT_TO_WORK_LABELS[rightToWorkValue] || rightToWorkValue;
+            const sourceUrl = trackingValue(row.additional_info, 'Source URL');
+            const utmSource = trackingValue(row.additional_info, 'UTM Source');
+            const utmMedium = trackingValue(row.additional_info, 'UTM Medium');
+            const utmCampaign = trackingValue(row.additional_info, 'UTM Campaign');
+            const campaignParts = [utmSource, utmMedium, utmCampaign].filter(Boolean).map(escapeHtml);
+
+            document.getElementById('detailsTitle').textContent = row.full_name || 'Applicant';
+            document.getElementById('detailsMeta').textContent = `${row.email || 'N/A'} · Applied ${dateStr}`;
+            const statusEl = document.getElementById('detailsStatus');
+            statusEl.className = `status ${statusClass}`;
+            statusEl.textContent = status;
+
+            const fields = [
+                ['Phone', escapeHtml(row.phone) || 'N/A'],
+                ['Address', escapeHtml(row.address) || 'N/A'],
+                ['License Type', escapeHtml(licenseTypeText) || 'N/A'],
+                ['Licence Issuing Country', escapeHtml(licenceCountryText) || 'N/A'],
+                ['Experience', escapeHtml(experienceText) || 'N/A'],
+                ['Shift Type', escapeHtml(availabilityText) || 'N/A'],
+                ['Right to Work', escapeHtml(rightToWorkText) || 'N/A'],
+                ['Campaign', campaignParts.length ? campaignParts.join(' / ') : 'N/A']
+            ];
+            document.getElementById('detailsGrid').innerHTML = fields.map(([label, value]) => `
+                <div><div class="field-label">${label}</div><div class="field-value">${value}</div></div>
+            `).join('');
+
+            const cvEndpoint = row.cv_url ? '/api/recruitment-admin?cv=' + encodeURIComponent(row.cv_url) : '';
+            const cvFileName = row.cv_file_name && row.cv_file_name !== 'Not provided' ? row.cv_file_name : 'cv.pdf';
+            document.getElementById('detailsCv').innerHTML = cvEndpoint
+                ? `<div class="cv-actions">
+                    <button type="button" class="action-btn cv-link-btn" data-cv-endpoint="${escapeHtml(cvEndpoint)}" data-cv-filename="${escapeHtml(cvFileName)}" title="Open CV in a new tab">View CV</button>
+                    <button type="button" class="action-btn cv-link-btn" data-cv-endpoint="${escapeHtml(cvEndpoint)}" data-cv-filename="${escapeHtml(cvFileName)}" data-cv-download="1" title="Download CV">Save CV</button>
+                   </div>`
+                : '<span style="color:var(--gray-mid);font-size:0.85rem;">CV not provided</span>';
+
+            document.getElementById('detailsNotes').innerHTML = sourceUrl
+                ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener" style="color:var(--dark-blue);font-weight:600;">View original source ↗</a>`
+                : '';
+
+            document.getElementById('detailsActions').innerHTML = `
+                <button type="button" class="action-btn message-btn" data-action="message">Message</button>
+                <button type="button" class="action-btn approve-btn" data-action="approved" ${decided ? 'disabled' : ''}>Approve</button>
+                <button type="button" class="action-btn decline-btn" data-action="declined" ${decided ? 'disabled' : ''}>Decline</button>
+                <button type="button" class="action-btn archive-btn" data-action="archived" ${isArchived ? 'disabled' : ''}>Archive</button>
+                <button type="button" class="action-btn delete-btn" data-action="delete">Delete</button>
+            `;
+
+            document.getElementById('detailsDialog').showModal();
+        }
+
+        document.getElementById('detailsDialog').addEventListener('click', async event => {
+            const target = event.target;
+
+            if (target.classList.contains('cv-link-btn')) {
+                const endpoint = target.dataset.cvEndpoint;
+                const fileName = target.dataset.cvFilename || 'cv.pdf';
+                const isDownload = target.dataset.cvDownload === '1';
+                // noopener would make window.open() return null, so we can't redirect it after the fetch
+                const cvWindow = isDownload ? null : window.open('', '_blank');
+                if (cvWindow) cvWindow.opener = null;
+                target.disabled = true;
+                try {
+                    const response = await fetch(endpoint, { headers: staffHeaders() });
+                    if (!response.ok) throw new Error('CV could not be retrieved.');
+                    const rawBlob = await response.blob();
+                    // force a PDF mime type so the browser renders it instead of prompting a download
+                    const blob = /\.pdf$/i.test(fileName) ? rawBlob.slice(0, rawBlob.size, 'application/pdf') : rawBlob;
+                    const blobUrl = URL.createObjectURL(blob);
+                    if (isDownload) {
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = fileName;
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                    } else if (cvWindow) {
+                        cvWindow.location.href = blobUrl;
+                    }
+                    setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+                } catch (cvError) {
+                    if (cvWindow) cvWindow.close();
+                    showToast(cvError.message, 'error');
+                } finally {
+                    target.disabled = false;
+                }
+                return;
+            }
+
+            if (!target.dataset.action) return;
+
+            const row = recruitmentRowsCache.find(item => item.id === currentDetailsId);
+            if (!row) return;
+            const id = row.id;
+            const email = row.email;
+            const name = row.full_name;
+            const decision = target.dataset.action; // 'approved' | 'declined' | 'archived' | 'delete' | 'message'
+
+            if (decision === 'message') {
+                document.getElementById('detailsDialog').close();
+                openMessageDialog(email, name);
+                return;
+            }
+
+            const actionButtons = document.getElementById('detailsActions').querySelectorAll('.action-btn');
+
+            if (decision === 'delete') {
+                const confirmedDelete = await showConfirm(`Permanently delete this application from ${name || 'this applicant'}? This cannot be undone.`);
+                if (!confirmedDelete) return;
+
+                actionButtons.forEach(b => b.disabled = true);
+
+                if (id.startsWith('web3-')) {
+                    importedRecruitmentRows = importedRecruitmentRows.filter(item => item.id !== id);
+                } else {
+                    const response = await fetch('/api/recruitment-admin', {
+                        method: 'DELETE',
+                        headers: { ...staffHeaders(), 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id })
+                    });
+                    if (!response.ok) {
+                        showToast('Could not delete the application. Please try again.', 'error');
+                        actionButtons.forEach(b => b.disabled = false);
+                        return;
+                    }
+                }
+
+                document.getElementById('detailsDialog').close();
+                showToast('Application deleted.', 'success');
+                loadRecruitment();
+                return;
+            }
+
+            const confirmMessageText = decision === 'archived'
+                ? `Archive this application from ${name || 'this applicant'}?`
+                : `Mark this application as ${decision} and notify the applicant?`;
+            const confirmed = await showConfirm(confirmMessageText);
+            if (!confirmed) return;
+
+            actionButtons.forEach(b => b.disabled = true);
+
+            let updateError = null;
+            if (id.startsWith('web3-')) {
+                const imported = importedRecruitmentRows.find(item => item.id === id);
+                if (imported) imported.status = decision;
+            } else {
+                const response = await fetch('/api/recruitment-admin', {
+                    method: 'PATCH',
+                    headers: { ...staffHeaders(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, status: decision })
+                });
+                if (!response.ok) updateError = new Error('Application update failed');
+            }
+
+            if (updateError) {
+                showToast('Could not update the application status. Please try again.', 'error');
+                actionButtons.forEach(b => b.disabled = false);
+                return;
+            }
+
+            document.getElementById('detailsDialog').close();
+
+            if (decision === 'archived') {
+                showToast('Application archived.', 'success');
+                loadRecruitment();
+                return;
+            }
+
+            try {
+                await fetch('/api/send-notification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: decision === 'approved' ? 'recruitment-approved' : 'recruitment-declined',
+                        to: email,
+                        name: name
+                    })
+                });
+            } catch (notifyError) {
+                console.warn('Applicant notification failed to send:', notifyError);
+            }
+
+            showToast(`Application ${decision}.`, 'success');
+            loadRecruitment();
+        });
 
         function applyRecruitmentFilters() {
             const searchTerm = document.getElementById('recruitmentSearch').value.trim().toLowerCase();
@@ -1181,7 +1228,7 @@
 
             const empty = document.getElementById('recruitmentEmpty');
             if (filtered.length === 0) {
-                document.getElementById('recruitmentData').innerHTML = '';
+                document.getElementById('recruitmentList').innerHTML = '';
                 empty.innerHTML = recruitmentRowsCache.length === 0
                     ? '<span class="no-data-icon">📭</span>No applications yet'
                     : '<span class="no-data-icon">🔍</span>No applications match your search or filter';
@@ -1198,7 +1245,7 @@
         document.getElementById('refreshRecruitment').addEventListener('click', loadRecruitment);
 
         async function loadRecruitment() {
-            const tbody = document.getElementById('recruitmentData');
+            const list = document.getElementById('recruitmentList');
             const empty = document.getElementById('recruitmentEmpty');
             const updatedLabel = document.getElementById('recruitmentUpdated');
             const refreshBtn = document.getElementById('refreshRecruitment');
@@ -1206,7 +1253,7 @@
             refreshBtn.disabled = true;
             refreshBtn.classList.add('loading');
             empty.style.display = 'none';
-            renderSkeletonRows(tbody, 3);
+            renderSkeletonRows(list, 3);
 
             try {
                 const response = await fetch('/api/recruitment-admin', { headers: staffHeaders() });
@@ -1227,7 +1274,7 @@
                 console.error('Error loading recruitment:', error);
                 recruitmentRowsCache = [];
                 renderRecruitmentStats([]);
-                tbody.innerHTML = '';
+                list.innerHTML = '';
                 empty.innerHTML = '<span class="no-data-icon">⚠️</span>Applications could not be loaded. Please refresh.';
                 empty.style.display = 'block';
             } finally {
