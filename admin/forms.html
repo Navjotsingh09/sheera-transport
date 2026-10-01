@@ -212,6 +212,7 @@
         .status-new { background: rgba(255, 21, 0, 0.1); color: var(--red); }
         .status-approved { background: rgba(29, 111, 53, 0.12); color: #1D6F35; }
         .status-declined { background: rgba(102, 102, 102, 0.15); color: var(--gray-dark); }
+        .status-archived { background: rgba(0, 16, 96, 0.08); color: var(--gray-mid); }
 
         .action-btn {
             border: none;
@@ -228,6 +229,8 @@
         .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .approve-btn { background: #1D6F35; color: var(--white); }
         .decline-btn { background: var(--gray-mid); color: var(--white); }
+        .archive-btn { background: var(--dark-blue); color: var(--white); }
+        .delete-btn { background: #C30A0A; color: var(--white); }
 
         .no-data {
             text-align: center;
@@ -262,6 +265,17 @@
         .recruitment-only .tabs,
         .recruitment-only #tab0,
         .recruitment-only #tab2 { display: none; }
+
+        /* Keep Actions column visible without scrolling the whole wide table */
+        #recruitmentTable th:last-child,
+        #recruitmentTable td:last-child {
+            position: sticky;
+            right: 0;
+            background: var(--white);
+            box-shadow: -4px 0 6px -4px rgba(0, 0, 0, 0.15);
+            white-space: nowrap;
+        }
+        #recruitmentTable th:last-child { background: #eef0f8; }
 
         /* Stats bar */
         .stats-grid {
@@ -423,6 +437,8 @@
             .card-table thead { display: none; }
             .card-table, .card-table tbody, .card-table tr, .card-table td { display: block; width: 100%; }
             .card-table { box-shadow: none; background: none; }
+            #recruitmentTable th:last-child,
+            #recruitmentTable td:last-child { position: static; box-shadow: none; }
             .card-table tr {
                 margin-bottom: 1rem;
                 background: var(--white);
@@ -526,6 +542,7 @@
                         <option value="pending">Pending review</option>
                         <option value="approved">Approved</option>
                         <option value="declined">Declined</option>
+                        <option value="archived">Archived</option>
                     </select>
                     <button type="button" class="refresh-btn" id="refreshRecruitment"><span class="spin">⟳</span> Refresh</button>
                     <span id="recruitmentUpdated" class="updated-label"></span>
@@ -963,8 +980,9 @@
                        </div>`
                     : '<span style="color:var(--gray-mid);">Not provided</span>';
                 const status = d.status || 'pending';
-                const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : 'status-new';
-                const decided = status === 'approved' || status === 'declined';
+                const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : status === 'archived' ? 'status-archived' : 'status-new';
+                const decided = status === 'approved' || status === 'declined' || status === 'archived';
+                const isArchived = status === 'archived';
                 const sourceUrl = trackingValue(d.additional_info, 'Source URL');
                 const utmSource = trackingValue(d.additional_info, 'UTM Source');
                 const utmMedium = trackingValue(d.additional_info, 'UTM Medium');
@@ -1001,6 +1019,8 @@
                             <button class="action-btn message-btn" data-action="message">Message</button>
                             <button class="action-btn approve-btn" data-action="approved" ${decided ? 'disabled' : ''}>Approve</button>
                             <button class="action-btn decline-btn" data-action="declined" ${decided ? 'disabled' : ''}>Decline</button>
+                            <button class="action-btn archive-btn" data-action="archived" ${isArchived ? 'disabled' : ''}>Archive</button>
+                            <button class="action-btn delete-btn" data-action="delete">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -1059,14 +1079,43 @@
                     const id = row.dataset.id;
                     const email = row.dataset.email;
                     const name = row.dataset.name;
-                    const decision = target.dataset.action; // 'approved' | 'declined' | 'message'
+                    const decision = target.dataset.action; // 'approved' | 'declined' | 'archived' | 'delete' | 'message'
 
                     if (decision === 'message') {
                         openMessageDialog(email, name);
                         return;
                     }
 
-                    const confirmed = await showConfirm(`Mark this application as ${decision} and notify the applicant?`);
+                    if (decision === 'delete') {
+                        const confirmedDelete = await showConfirm(`Permanently delete this application from ${name || 'this applicant'}? This cannot be undone.`);
+                        if (!confirmedDelete) return;
+
+                        row.querySelectorAll('.action-btn').forEach(b => b.disabled = true);
+
+                        if (id.startsWith('web3-')) {
+                            importedRecruitmentRows = importedRecruitmentRows.filter(item => item.id !== id);
+                        } else {
+                            const response = await fetch('/api/recruitment-admin', {
+                                method: 'DELETE',
+                                headers: { ...staffHeaders(), 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id })
+                            });
+                            if (!response.ok) {
+                                showToast('Could not delete the application. Please try again.', 'error');
+                                row.querySelectorAll('.action-btn').forEach(b => b.disabled = false);
+                                return;
+                            }
+                        }
+
+                        showToast('Application deleted.', 'success');
+                        loadRecruitment();
+                        return;
+                    }
+
+                    const confirmMessageText = decision === 'archived'
+                        ? `Archive this application from ${name || 'this applicant'}?`
+                        : `Mark this application as ${decision} and notify the applicant?`;
+                    const confirmed = await showConfirm(confirmMessageText);
                     if (!confirmed) return;
 
                     row.querySelectorAll('.action-btn').forEach(b => b.disabled = true);
@@ -1087,6 +1136,12 @@
                     if (updateError) {
                         showToast('Could not update the application status. Please try again.', 'error');
                         row.querySelectorAll('.action-btn').forEach(b => b.disabled = false);
+                        return;
+                    }
+
+                    if (decision === 'archived') {
+                        showToast('Application archived.', 'success');
+                        loadRecruitment();
                         return;
                     }
 
@@ -1118,8 +1173,10 @@
                 const matchesSearch = !searchTerm
                     || (row.full_name || '').toLowerCase().includes(searchTerm)
                     || (row.email || '').toLowerCase().includes(searchTerm);
-                const normalizedStatus = (row.status === 'approved' || row.status === 'declined') ? row.status : 'pending';
-                const matchesStatus = statusFilter === 'all' || normalizedStatus === statusFilter;
+                const normalizedStatus = ['approved', 'declined', 'archived'].includes(row.status) ? row.status : 'pending';
+                const matchesStatus = statusFilter === 'all'
+                    ? normalizedStatus !== 'archived'
+                    : normalizedStatus === statusFilter;
                 return matchesSearch && matchesStatus;
             });
 

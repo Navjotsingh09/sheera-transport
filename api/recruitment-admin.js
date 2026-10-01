@@ -115,13 +115,23 @@ export default async function handler(req, res) {
 
   if (req.method === 'PATCH') {
     const { id, status } = req.body || {};
-    if (!id || !['approved', 'declined', 'pending_review'].includes(status)) {
+    if (!id || !['approved', 'declined', 'pending_review', 'archived'].includes(status)) {
       return res.status(400).json({ error: 'Invalid application update.' });
     }
     const response = await fetch(`${SUPABASE_URL}/rest/v1/recruitment_submissions?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { ...serviceHeaders(), Prefer: 'return=minimal' },
       body: JSON.stringify({ status })
+    });
+    return res.status(response.status).json({ success: response.ok });
+  }
+
+  if (req.method === 'DELETE') {
+    const { id } = req.body || {};
+    if (!id) return res.status(400).json({ error: 'Application id is required.' });
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/recruitment_submissions?id=eq.${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { ...serviceHeaders(), Prefer: 'return=minimal' }
     });
     return res.status(response.status).json({ success: response.ok });
   }
